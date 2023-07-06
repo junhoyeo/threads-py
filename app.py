@@ -1,8 +1,7 @@
-import main
+from main import ThreadsAPI
 
-api = main.ThreadsAPI()
-
-username = "INSERT_USERNAME"
+api = ThreadsAPI()
+username = "stkildafc"
 
 user_id = api.get_user_id_from_username(username)
 user_profile = api.get_user_profile(username)
