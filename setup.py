@@ -12,7 +12,7 @@ with open(os.path.join("threadspy", "__init__.py"), encoding="utf-8") as f:
             author = line.split("=")[1].strip().replace('"', "").replace("'", "")
 
 setup(
-    name="threadspy",
+    name="threads-py",
     version=version,
     author=author,
     author_email="i@junho.io",

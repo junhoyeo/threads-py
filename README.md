@@ -5,7 +5,7 @@
 ## Installation
 
 ```bash
-pip install threadspy
+pip install threads-py
 ```
 
 ## Usages
