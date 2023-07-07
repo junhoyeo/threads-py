@@ -11,7 +11,7 @@ pip install threads-py
 ## Usages
 
 ```python
-from threadspy._thread import ThreadsAPI
+from threadspy import ThreadsAPI
 
 api = ThreadsAPI()
 

@@ -1,4 +1,4 @@
-from threadspy._thread import ThreadsAPI
+from threadspy import ThreadsAPI
 
 api = ThreadsAPI()
 username = "iamiks"
