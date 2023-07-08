@@ -53,6 +53,12 @@ print(thread)
 # get who liked a thread
 linkers = api.get_thread_likers(post_id)
 print(linkers)
+
+# post publish(account must be public)
+api = ThreadsAPI(username="", password="")
+caption = "Hello World!"
+check_sum = api.publish(caption)
+print(check_sum)
 ```
 
 ## [<img src="./.github/emojis/pushpin.png" width="30" height="30" />](https://github.com/junhoyeo) Roadmap
@@ -71,7 +77,13 @@ print(linkers)
   - [ ] 🚧 Link Threads & LLaMa
   - [ ] 🚧 Provide statistical analysis of posts in Threads
 - [ ] 🚧 Read private data
-- [ ] 🚧 Write data (i.e. write automated Threads)
+- [x] ✅ Write data (i.e. write automated Threads)
+  - [x] ✅ Create new Thread with text
+    - [ ] 🚧 Make link previews to get shown
+  - [ ] 🚧 Create new Thread with media
+  - [ ] 🚧 Reply to existing Thread
+- [x] 🏴‍☠️ Restructure project as an monorepo
+  - [ ] 🏴‍☠️ Cool CLI App to run Threads in the Terminal
 
 ## License
 
