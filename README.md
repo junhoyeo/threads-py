@@ -17,23 +17,41 @@ api = ThreadsAPI()
 
 username = "{username}"
 
+# get a user id
 user_id = api.get_user_id_from_username(username)
 print(user_id)
 
+# get a profile info
 profile = api.get_user_profile(username, user_id=user_id)
 print(profile)
 
+# get a profile's threads tab
 threads = api.get_user_profile_threads(username, user_id=user_id)
 print(threads)
 
-post_id = "{post_id}"
-thread = api.get_user_profile_thread(username, post_id=post_id)
+# get a profile's replies tab
+replies = api.get_user_profile_replies(username, user_id=user_id)
+print(replies)
+
+# 3-ways to get the {post_id}
+thread_id = "CuX_UYABrr7"
+post_id = api.get_post_id_from_thread_id(thread_id)
+print(post_id)
+
+post_url = "https://www.threads.net/t/CuX_UYABrr7/?igshid=MzRlODBiNWFlZA=="
+post_id = api.get_post_id_from_url(post_url)
+print(post_id)
+
+thread_id = "CuX_UYABrr7"
+post_id = api.get_post_id_from_thread_id(thread_id)
+print(post_id)
+
+# get threads info
+thread = api.get_threads(post_id)
 print(thread)
 
-threads = api.get_user_profile_replies(username, user_id=user_id)
-print(threads)
-
-linkers = api.get_thread_likers(username, post_id=post_id)
+# get who liked a thread
+linkers = api.get_thread_likers(post_id)
 print(linkers)
 ```
 
