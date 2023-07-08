@@ -1,6 +1,10 @@
 import re
+import json
+import urllib
+import random
 import requests
-from typing import List
+from datetime import datetime
+from typing import List, Optional
 
 from threadspy.types import (
     Thread,
@@ -15,20 +19,38 @@ from threadspy.types import (
 )
 
 DEFAULT_LSD_TOKEN = "NjppQDEgONsU_1LCzrmp6q"
+DEFAULT_DEVICE_ID = f"android-{random.randint(0, 1e24):x}"
 
 
 class ThreadsAPI:
     fbLSDToken = DEFAULT_LSD_TOKEN
     verbose = False
     noUpdateLSD = False
+    username = None
+    password = None
+    device_id = DEFAULT_DEVICE_ID
     http_client = requests.Session()
 
-    def __init__(self, verbose=None, noUpdateLSD=None, fbLSDToken=None):
-        if fbLSDToken is not None and "str" == str(type(fbLSDToken)):
+    def __init__(
+        self,
+        verbose=None,
+        noUpdateLSD=None,
+        fbLSDToken=None,
+        username=None,
+        password=None,
+        device_id=None,
+    ):
+        if fbLSDToken is not None and "<class 'str'>" == str(type(fbLSDToken)):
             self.fbLSDToken = fbLSDToken
-        if noUpdateLSD is not None and "bool" == str(type(noUpdateLSD)):
+        if username is not None and "<class 'str'>" == str(type(username)):
+            self.username = username
+        if password is not None and "<class 'str'>" == str(type(password)):
+            self.password = password
+        if device_id is not None and "<class 'str'>" == str(type(device_id)):
+            self.device_id = device_id
+        if noUpdateLSD is not None and "<class 'bool'>" == str(type(noUpdateLSD)):
             self.noUpdateLSD = noUpdateLSD
-        if verbose is not None and "bool" == str(type(verbose)):
+        if verbose is not None and "<class 'bool'>" == str(type(verbose)):
             self.verbose = verbose
 
     def __get_default_headers(self, username: str = None):
@@ -46,6 +68,7 @@ class ThreadsAPI:
                 "x-ig-app-id": "238260118697367",
             }
         else:
+            self.username = username
             return {
                 "authority": "www.threads.net",
                 "accept": "*/*",
@@ -70,9 +93,9 @@ class ThreadsAPI:
             str: a user id.
         """
         headers = self.__get_default_headers(username)
-        headers["accept"] = (
-            "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
-        )
+        headers[
+            "accept"
+        ] = "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"
         headers["accept-language"] = "ko,en;q=0.9,ko-KR;q=0.8,ja;q=0.7"
         headers["pragma"] = "no-cache"
         headers["referer"] = "https://www.instagram.com/"
@@ -88,10 +111,10 @@ class ThreadsAPI:
 
         text = response.text.replace("\n", "")
 
-        user_id_match = re.search(r'"props":{"user_id":"(\d+)"},', text)
+        user_id_match = re.search('"user_id":"(\d+)",', text)
         user_id = user_id_match.group(1) if user_id_match else None
 
-        lsd_token_match = re.search(r'"LSD",\[\],{"token":"(\w+)"},\d+\]', text)
+        lsd_token_match = re.search('"LSD",\[\],{"token":"(\w+)"},\d+\]', text)
         lsd_token = lsd_token_match.group(1) if lsd_token_match else None
 
         if not self.noUpdateLSD and self.fbLSDToken is not None:
@@ -320,3 +343,101 @@ class ThreadsAPI:
             if self.verbose:
                 print("[ERROR] ", e)
             return UsersData(users=[])
+
+    def get_token(self) -> Optional[str]:
+        """
+        Returns fb login token
+
+        Returns:
+            str: a token
+        """
+        if self.username is None or self.password is None:
+            return None
+        base = "https://i.instagram.com/api/v1"
+        url = f"{base}/bloks/apps/com.bloks.www.bloks.caa.login.async.send_login_request/"
+        blockVersion = "5f56efad68e1edec7801f630b5c122704ec5378adbee6609a448f105f34a9c73"
+        headers = {
+            "User-Agent": "Barcelona 289.0.0.77.109 Android",
+            "Sec-Fetch-Site": "same-origin",
+            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+        }
+        params = json.dumps(
+            {
+                "client_input_params": {
+                    "password": self.password,
+                    "contact_point": self.username,
+                    "device_id": self.device_id,
+                },
+                "server_params": {
+                    "credential_type": "password",
+                    "device_id": self.device_id,
+                },
+            }
+        )
+        bk_client_context = json.dumps({"bloks_version": blockVersion, "styles_id": "instagram"})
+        payload = f"params={urllib.parse.quote(params)}&bk_client_context={urllib.parse.quote(bk_client_context)}&bloks_versioning_id={blockVersion}"
+        payload = payload.replace("%20", "")
+        response = requests.post(url, timeout=60 * 1000, headers=headers, data=payload)
+        data = response.text
+        if data == "Oops, an error occurred.":
+            return None
+        pos = data.split("Bearer IGT:2:")[1]
+        pos = pos.split("==")[0]
+        token = f"{pos}=="
+        return token
+
+    def publish(self, caption: str) -> bool:
+        """
+        Returns fb login token
+
+        Returns:
+            str: a token
+        """
+        if self.username is None or self.password is None:
+            return False
+
+        user_id = self.get_user_id_from_username(self.username)
+        if user_id is None:
+            return False
+        token = self.get_token()
+        if token is None:
+            return False
+        base = "https://i.instagram.com"
+        url = f"{base}/api/v1/media/configure_text_only_post/"
+        params = json.dumps(
+            {
+                "publish_mode": "text_post",
+                "text_post_app_info": '{"reply_control":0}',
+                "timezone_offset": "-25200",
+                "source_type": "4",
+                "_uid": user_id,
+                "device_id": str(self.device_id),
+                "caption": caption,
+                "upload_id": str(int(datetime.now().timestamp() * 1000)),
+                "device": {
+                    "manufacturer": "OnePlus",
+                    "model": "ONEPLUS+A3010",
+                    "android_version": 25,
+                    "android_release": "7.1.1",
+                },
+            }
+        )
+        payload = f"signed_body=SIGNATURE.{urllib.parse.quote(params)}"
+        payload = payload.replace("%20", "")
+
+        headers = {
+            "Authorization": f"Bearer IGT:2:{token}",
+            "User-Agent": "Barcelona 289.0.0.77.109 Android",
+            "Sec-Fetch-Site": "same-origin",
+            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+        }
+        try:
+            response = requests.post(url, headers=headers, data=payload)
+            if response.status_code == 200:
+                return True
+            else:
+                return False
+        except Exception as e:
+            if self.verbose:
+                print("[ERROR] ", e)
+            return False
