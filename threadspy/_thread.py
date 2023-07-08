@@ -200,7 +200,7 @@ class ThreadsAPI:
         params = {
             "lsd": f"{self.fbLSDToken}",
             "variables": f'{{"userID":"{user_id}"}}',
-            "doc_id": "6307072669391286",
+            "doc_id": "6684830921547925",
         }
 
         response = self.http_client.post(
