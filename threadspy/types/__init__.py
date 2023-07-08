@@ -9,6 +9,8 @@ from .quoted_post import QuotedPost
 from .thread_item import ThreadItem
 from .thread_data import ThreadData
 from .reposted_post import RepostedPost
+from .users import UsersData
+from .threads_user import ThreadsUser
 from .video_version import VideoVersion
 from .image_versions2 import ImageVersions2
 from .user_profile_data import UserProfileData
