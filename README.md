@@ -57,7 +57,7 @@ print(linkers)
 ```
 </details>
 
-<summary><h3>🚀 Usage (Write)</h3></summary>
+### 🚀 Usage (Write)
 
 ```python
 from threadspy import ThreadsAPI
@@ -77,7 +77,6 @@ print(check_sum)
 check_sum = api.publish_with_image(caption, image_path="https://github.com/junhoyeo/threads-py/blob/main/.github/logo.jpg?raw=true")
 print(check_sum)
 ```
-</details>
 
 ## [<img src="./.github/emojis/pushpin.png" width="30" height="30" />](https://github.com/junhoyeo) Roadmap
 
