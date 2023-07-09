@@ -71,19 +71,19 @@ class ThreadsAgent:
 
     def analysis_profile(self, username: str, boundary: str = "all", onlyText=False, sort="DESC"):
         self.threads_api.username = username
-        user_id = self.threads_api.get_user_id_from_username(username=username)
-        if user_id is None:
+        is_valid_user = self.threads_api.get_user_id_from_username(username=username)
+        if not is_valid_user:
             raise "[Auth] Private profiles cannot be analyzed."
         if boundary in ["all", "replies", "threads"]:
             threads = []
             if boundary in ["all", "replies"]:
                 replies_tab = self.threads_api.get_user_profile_replies(
-                    username=username, user_id=user_id
+                    username=username, user_id=self.threads_api.user_id
                 )
                 threads.extend(replies_tab)
             if boundary in ["all", "threads"]:
                 threads_tab = self.threads_api.get_user_profile_threads(
-                    username=username, user_id=user_id
+                    username=username, user_id=self.threads_api.user_id
                 )
                 threads.extend(threads_tab)
             threads = [[item["post"] for item in x.to_dict()["thread_items"]] for x in threads]
