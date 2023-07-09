@@ -55,9 +55,18 @@ linkers = api.get_thread_likers(post_id)
 print(linkers)
 
 # post publish(account must be public)
-api = ThreadsAPI(username="", password="")
+api = ThreadsAPI(username="username", password="password")
 caption = "Hello World!"
 check_sum = api.publish(caption)
+print(check_sum)
+
+# post publish with local image
+caption = "Hello World!"
+check_sum = api.publish_with_image(caption, image_path=".github/logo.jpg")
+print(check_sum)
+
+# post publish with url image
+check_sum = api.publish_with_image(caption, image_path="https://github.com/junhoyeo/threads-py/blob/main/.github/logo.jpg?raw=true")
 print(check_sum)
 ```
 
@@ -80,7 +89,7 @@ print(check_sum)
 - [x] ✅ Write data (i.e. write automated Threads)
   - [x] ✅ Create new Thread with text
     - [ ] 🚧 Make link previews to get shown
-  - [ ] 🚧 Create new Thread with media
+  - [x] ✅ Create new Thread with media
   - [ ] 🚧 Reply to existing Thread
 - [x] 🏴‍☠️ Restructure project as an monorepo
   - [ ] 🏴‍☠️ Cool CLI App to run Threads in the Terminal

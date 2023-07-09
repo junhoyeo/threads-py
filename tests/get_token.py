@@ -8,7 +8,6 @@ class TestGetToken(unittest.TestCase):
 
     def test_get_token(self):
         token = self.threads_api.get_token()
-        print(token)
         self.assertIsInstance(token, str)
 
 
