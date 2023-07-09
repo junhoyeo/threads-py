@@ -415,7 +415,6 @@ class ThreadsAPI:
                 {"bloks_version": blockVersion, "styles_id": "instagram"}
             )
             payload = f"params={urllib.parse.quote(params)}&bk_client_context={urllib.parse.quote(bk_client_context)}&bloks_versioning_id={blockVersion}"
-
             response = requests.post(LOGIN_URL, timeout=60 * 1000, headers=headers, data=payload)
             data = response.text
             if data == "Oops, an error occurred.":
@@ -586,6 +585,8 @@ class ThreadsAPI:
             "IG-FB-Xpost-entry-point-v2": "feed",
         }
         contentLength = len(content)
+        if mime_type.startswith("image/"):
+            mime_type = mime_type.replace("image/", "")
         image_headers = {
             "X_FB_PHOTO_WATERFALL_ID": str(uuid.uuid4()),
             "X-Entity-Type": "image/" + mime_type,
@@ -604,28 +605,3 @@ class ThreadsAPI:
             return response.text
         else:
             return None
-
-    def update_media_with_pdq_hash_info(self, upload_id="87490918227685"):
-        headers = POST_HEADERS_DEFAULT.copy()
-        headers.update({"Authorization": f"Bearer IGT:2:{self.token}"})
-
-        pdq_hash_info = {
-            "pdq_hash": "17b1b91bb94b46e417b1319346b4ce6ce84eec4e46b413b117b1b91bb94b46e4:89",
-            "frame_time": 0,
-        }
-        body_data = {
-            "pdq_hash_info": json.dumps(pdq_hash_info),
-            "_uid": self.user_id,
-            "_uuid": "3d8ce049-3663-4cfe-9417-08d152df3874",
-            "upload_id": f"{upload_id}",
-        }
-
-        body = {"signed_body": f"SIGNATURE.{json.dumps(body_data)}"}
-        response = self.http_client.post(
-            "https://i.instagram.com/api/v1/media/update_media_with_pdq_hash_info/",
-            headers=headers,
-            data=body,
-        )
-        if response.status_code == 200:
-            post_result = response.json()
-            return post_result
