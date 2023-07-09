@@ -7,8 +7,9 @@ class TestGetToken(unittest.TestCase):
         self.threads_api = ThreadsAPI(verbose=True, username="username", password="password")
 
     def test_get_token(self):
-        token = self.threads_api.get_token()
-        self.assertIsInstance(token, str)
+        check_sum = self.threads_api.get_token()
+        self.assertIsInstance(check_sum, bool)
+        self.assertIsInstance(self.threads_api.token, str)
 
 
 if __name__ == "__main__":
