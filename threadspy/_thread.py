@@ -117,7 +117,7 @@ class ThreadsAPI:
                 "x-ig-app-id": "238260118697367",
             }
 
-    def get_user_id_from_username(self, username) -> bool:
+    def get_user_id_from_username(self, username) -> str:
         """
         set user id by username.
 
@@ -125,7 +125,7 @@ class ThreadsAPI:
             username (str): username on threads.net
 
         Returns:
-            bool: validate user_id
+            string: user_id if not valid return None
         """
         headers = self.__get_default_headers(username)
         headers[
@@ -158,9 +158,9 @@ class ThreadsAPI:
                 print("[fbLSDToken] UPDATED", self.fbLSDToken)
         if user_id is not None:
             self.user_id = user_id
-            return True
+            return self.user_id
         else:
-            return False
+            return None
 
     def get_user_profile(self, username, user_id=None) -> ThreadsUser:
         """
@@ -382,15 +382,15 @@ class ThreadsAPI:
                 print("[ERROR] ", e)
             return UsersData(users=[])
 
-    def get_token(self) -> bool:
+    def get_token(self) -> str:
         """
         set fb login token
 
         Returns:
-            bool: validate token
+            str: validate token string None if not valid
         """
         if self.username is None or self.password is None:
-            return False
+            return None
         try:
             blockVersion = "5f56efad68e1edec7801f630b5c122704ec5378adbee6609a448f105f34a9c73"
             headers = {
@@ -425,11 +425,11 @@ class ThreadsAPI:
                 pos = pos.split("==")[0]
                 token = f"{pos}=="
                 self.token = token
-                return True
-            return False
+                return self.token
+            return None
         except Exception as e:
             print("[ERROR] ", e)
-            return False
+            return None
 
     def publish(self, caption: str) -> bool:
         """
