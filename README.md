@@ -90,6 +90,8 @@ print(check_sum)
   - [x] ✅ Create new Thread with text
     - [ ] 🚧 Make link previews to get shown
   - [x] ✅ Create new Thread with media
+    - [x] ✅ Create new Thread with image
+    - [ ] 🚧 Create new Thread with video
   - [ ] 🚧 Reply to existing Thread
 - [x] 🏴‍☠️ Restructure project as an monorepo
   - [ ] 🏴‍☠️ Cool CLI App to run Threads in the Terminal
