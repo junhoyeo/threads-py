@@ -1,5 +1,7 @@
 # [<img src="./.github/logo.jpg" width="36" height="36" />](https://github.com/junhoyeo) threads-py
 
+[![pypi](https://img.shields.io/pypi/v/threads-py.svg?style=flat-square&labelColor=black)](https://pypi.org/project/threads-py) [![MIT License](https://img.shields.io/badge/license-MIT-blue?style=flat-square&labelColor=black)](https://github.com/junhoyeo/threads-py/blob/main/LICENSE)
+
 > Unofficial, Reverse-Engineered Python client for Meta's Threads.
 
 ## Installation
