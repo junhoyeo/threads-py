@@ -8,7 +8,8 @@
 pip install threads-py
 ```
 
-## Usages
+<details>
+<summary><h3>🚀 Usage (Read)</h3></summary>
 
 ```python
 from threadspy import ThreadsAPI
@@ -53,6 +54,13 @@ print(thread)
 # get who liked a thread
 linkers = api.get_thread_likers(post_id)
 print(linkers)
+```
+</details>
+
+<summary><h3>🚀 Usage (Write)</h3></summary>
+
+```python
+from threadspy import ThreadsAPI
 
 # post publish(account must be public)
 api = ThreadsAPI(username="username", password="password")
@@ -69,6 +77,7 @@ print(check_sum)
 check_sum = api.publish_with_image(caption, image_path="https://github.com/junhoyeo/threads-py/blob/main/.github/logo.jpg?raw=true")
 print(check_sum)
 ```
+</details>
 
 ## [<img src="./.github/emojis/pushpin.png" width="30" height="30" />](https://github.com/junhoyeo) Roadmap
 
@@ -95,6 +104,7 @@ print(check_sum)
   - [ ] 🚧 Reply to existing Thread
 - [x] 🏴‍☠️ Restructure project as an monorepo
   - [ ] 🏴‍☠️ Cool CLI App to run Threads in the Terminal
+
 
 ## License
 
