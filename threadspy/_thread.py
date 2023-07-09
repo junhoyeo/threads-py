@@ -444,11 +444,11 @@ class ThreadsAPI:
         if self.username is None or self.password is None:
             return False
 
-        is_valid_user_id = self.get_user_id_from_username(self.username)
-        if not is_valid_user_id:
+        user_id = self.get_user_id_from_username(self.username)
+        if user_id is None:
             return False
-        is_valid_token = self.get_token()
-        if not is_valid_token:
+        token = self.get_token()
+        if token is None:
             return False
         params = json.dumps(
             {
@@ -495,11 +495,11 @@ class ThreadsAPI:
         """
         if self.username is None or self.password is None:
             return False
-        is_valid_user_id = self.get_user_id_from_username(self.username)
-        if not is_valid_user_id:
+        user_id = self.get_user_id_from_username(self.username)
+        if user_id is None:
             return False
-        is_valid_token = self.get_token()
-        if not is_valid_token:
+        token = self.get_token()
+        if token is None:
             return False
         image_content = None
         if not (os.path.isfile(image_path) and os.path.exists(image_path)):

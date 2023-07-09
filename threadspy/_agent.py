@@ -71,8 +71,8 @@ class ThreadsAgent:
 
     def analysis_profile(self, username: str, boundary: str = "all", onlyText=False, sort="DESC"):
         self.threads_api.username = username
-        is_valid_user = self.threads_api.get_user_id_from_username(username=username)
-        if not is_valid_user:
+        user_id = self.threads_api.get_user_id_from_username(username=username)
+        if user_id is None:
             raise "[Auth] Private profiles cannot be analyzed."
         if boundary in ["all", "replies", "threads"]:
             threads = []
