@@ -1,10 +1,14 @@
+import os
 import re
+import time
 import json
+import uuid
 import urllib
 import random
 import requests
+import mimetypes
+from typing import List
 from datetime import datetime
-from typing import List, Optional
 
 from threadspy.types import (
     Thread,
@@ -18,8 +22,14 @@ from threadspy.types import (
     GetUserProfileThreadsResponse,
 )
 
-DEFAULT_LSD_TOKEN = "NjppQDEgONsU_1LCzrmp6q"
-DEFAULT_DEVICE_ID = f"android-{random.randint(0, 1e24):x}"
+from threadspy._constant import (
+    DEFAULT_LSD_TOKEN,
+    DEFAULT_DEVICE_ID,
+    LOGIN_URL,
+    POST_URL,
+    POST_HEADERS_DEFAULT,
+    POST_WITH_IMAGE_URL,
+)
 
 
 class ThreadsAPI:
@@ -28,6 +38,8 @@ class ThreadsAPI:
     noUpdateLSD = False
     username = None
     password = None
+    user_id = None
+    token = None
     device_id = DEFAULT_DEVICE_ID
     http_client = requests.Session()
 
@@ -52,6 +64,29 @@ class ThreadsAPI:
             self.noUpdateLSD = noUpdateLSD
         if verbose is not None and "<class 'bool'>" == str(type(verbose)):
             self.verbose = verbose
+
+    def __is_valid_url(self, url: str) -> bool:
+        url_pattern = re.compile(
+            r"^(https?://)?"
+            r"((([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9])\.)+[a-zA-Z]{2,})"
+            r"(/?|/[-a-zA-Z0-9_%+.~!@#$^&*(){}[\]|/\\<>]*)$"
+        )
+        if re.match(url_pattern, url) is not None:
+            try:
+                response = requests.head(url)
+                return response.status_code == 200
+            except requests.exceptions.RequestException:
+                return False
+        return False
+
+    def __download(self, url: str) -> bytes:
+        try:
+            response = requests.get(url, stream=True)
+            response.raise_for_status()
+            return response.content
+        except requests.exceptions.RequestException as e:
+            print("[ERROR] fail to file load: ", e)
+            return None
 
     def __get_default_headers(self, username: str = None):
         if username is None:
@@ -82,15 +117,15 @@ class ThreadsAPI:
                 "x-ig-app-id": "238260118697367",
             }
 
-    def get_user_id_from_username(self, username) -> str:
+    def get_user_id_from_username(self, username) -> bool:
         """
-        Returns user id by username.
+        set user id by username.
 
         Args:
             username (str): username on threads.net
 
         Returns:
-            str: a user id.
+            bool: validate user_id
         """
         headers = self.__get_default_headers(username)
         headers[
@@ -121,8 +156,11 @@ class ThreadsAPI:
             self.fbLSDToken = lsd_token
             if self.verbose:
                 print("[fbLSDToken] UPDATED", self.fbLSDToken)
-
-        return user_id
+        if user_id is not None:
+            self.user_id = user_id
+            return True
+        else:
+            return False
 
     def get_user_profile(self, username, user_id=None) -> ThreadsUser:
         """
@@ -344,73 +382,82 @@ class ThreadsAPI:
                 print("[ERROR] ", e)
             return UsersData(users=[])
 
-    def get_token(self) -> Optional[str]:
+    def get_token(self) -> bool:
         """
-        Returns fb login token
+        set fb login token
 
         Returns:
-            str: a token
+            bool: validate token
         """
         if self.username is None or self.password is None:
-            return None
-        base = "https://i.instagram.com/api/v1"
-        url = f"{base}/bloks/apps/com.bloks.www.bloks.caa.login.async.send_login_request/"
-        blockVersion = "5f56efad68e1edec7801f630b5c122704ec5378adbee6609a448f105f34a9c73"
-        headers = {
-            "User-Agent": "Barcelona 289.0.0.77.109 Android",
-            "Sec-Fetch-Site": "same-origin",
-            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-        }
-        params = json.dumps(
-            {
-                "client_input_params": {
-                    "password": self.password,
-                    "contact_point": self.username,
-                    "device_id": self.device_id,
-                },
-                "server_params": {
-                    "credential_type": "password",
-                    "device_id": self.device_id,
-                },
+            return False
+        try:
+            blockVersion = "5f56efad68e1edec7801f630b5c122704ec5378adbee6609a448f105f34a9c73"
+            headers = {
+                "User-Agent": "Barcelona 289.0.0.77.109 Android",
+                "Sec-Fetch-Site": "same-origin",
+                "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
             }
-        )
-        bk_client_context = json.dumps({"bloks_version": blockVersion, "styles_id": "instagram"})
-        payload = f"params={urllib.parse.quote(params)}&bk_client_context={urllib.parse.quote(bk_client_context)}&bloks_versioning_id={blockVersion}"
-        payload = payload.replace("%20", "")
-        response = requests.post(url, timeout=60 * 1000, headers=headers, data=payload)
-        data = response.text
-        if data == "Oops, an error occurred.":
-            return None
-        pos = data.split("Bearer IGT:2:")[1]
-        pos = pos.split("==")[0]
-        token = f"{pos}=="
-        return token
+            params = json.dumps(
+                {
+                    "client_input_params": {
+                        "password": self.password,
+                        "contact_point": self.username,
+                        "device_id": self.device_id,
+                    },
+                    "server_params": {
+                        "credential_type": "password",
+                        "device_id": self.device_id,
+                    },
+                }
+            )
+            bk_client_context = json.dumps(
+                {"bloks_version": blockVersion, "styles_id": "instagram"}
+            )
+            payload = f"params={urllib.parse.quote(params)}&bk_client_context={urllib.parse.quote(bk_client_context)}&bloks_versioning_id={blockVersion}"
+
+            response = requests.post(LOGIN_URL, timeout=60 * 1000, headers=headers, data=payload)
+            data = response.text
+            if data == "Oops, an error occurred.":
+                return None
+            pos = data.split("Bearer IGT:2:")
+            if len(pos) > 1:
+                pos = pos[1]
+                pos = pos.split("==")[0]
+                token = f"{pos}=="
+                self.token = token
+                return True
+            return False
+        except Exception as e:
+            print("[ERROR] ", e)
+            return False
 
     def publish(self, caption: str) -> bool:
         """
-        Returns fb login token
+        Returns publish post
+
+        Args:
+            caption (str): post_id which is unique to each post.
 
         Returns:
-            str: a token
+            bool: verify that the post went publish
         """
         if self.username is None or self.password is None:
             return False
 
-        user_id = self.get_user_id_from_username(self.username)
-        if user_id is None:
+        is_valid_user_id = self.get_user_id_from_username(self.username)
+        if not is_valid_user_id:
             return False
-        token = self.get_token()
-        if token is None:
+        is_valid_token = self.get_token()
+        if not is_valid_token:
             return False
-        base = "https://i.instagram.com"
-        url = f"{base}/api/v1/media/configure_text_only_post/"
         params = json.dumps(
             {
                 "publish_mode": "text_post",
                 "text_post_app_info": '{"reply_control":0}',
                 "timezone_offset": "-25200",
                 "source_type": "4",
-                "_uid": user_id,
+                "_uid": self.user_id,
                 "device_id": str(self.device_id),
                 "caption": caption,
                 "upload_id": str(int(datetime.now().timestamp() * 1000)),
@@ -423,16 +470,10 @@ class ThreadsAPI:
             }
         )
         payload = f"signed_body=SIGNATURE.{urllib.parse.quote(params)}"
-        payload = payload.replace("%20", "")
-
-        headers = {
-            "Authorization": f"Bearer IGT:2:{token}",
-            "User-Agent": "Barcelona 289.0.0.77.109 Android",
-            "Sec-Fetch-Site": "same-origin",
-            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-        }
+        headers = POST_HEADERS_DEFAULT.copy()
+        headers.update({"Authorization": f"Bearer IGT:2:{self.token}"})
         try:
-            response = requests.post(url, headers=headers, data=payload)
+            response = requests.post(POST_URL, headers=headers, data=payload)
             if response.status_code == 200:
                 return True
             else:
@@ -441,3 +482,150 @@ class ThreadsAPI:
             if self.verbose:
                 print("[ERROR] ", e)
             return False
+
+    def publish_with_image(self, caption: str, image_path: str) -> bool:
+        """
+        Returns publish post with image
+
+        Args:
+            caption (str): post_id which is unique to each post.
+            image_path (str): image path
+
+        Returns:
+            bool: verify that the post with image went publish
+        """
+        if self.username is None or self.password is None:
+            return False
+        is_valid_user_id = self.get_user_id_from_username(self.username)
+        if not is_valid_user_id:
+            return False
+        is_valid_token = self.get_token()
+        if not is_valid_token:
+            return False
+        image_content = None
+        if not (os.path.isfile(image_path) and os.path.exists(image_path)):
+            if not self.__is_valid_url(image_path):
+                return False
+            else:
+                image_content = self.__download(image_path)
+        content = self.upload_image(image_path, image_content=image_content)
+        if content is not None:
+            try:
+                content = json.loads(content)
+                upload_id = content["upload_id"]
+                headers = POST_HEADERS_DEFAULT.copy()
+                headers.update({"Authorization": f"Bearer IGT:2:{self.token}"})
+                params = json.dumps(
+                    {
+                        "text_post_app_info": '{"reply_control":0}',
+                        "scene_capture_type": "",
+                        "timezone_offset": "-25200",
+                        "source_type": "4",
+                        "_uid": self.user_id,
+                        "device_id": str(self.device_id),
+                        "caption": caption,
+                        "upload_id": upload_id,
+                        "device": {
+                            "manufacturer": "OnePlus",
+                            "model": "ONEPLUS+A3010",
+                            "android_version": 25,
+                            "android_release": "7.1.1",
+                        },
+                    }
+                )
+                payload = f"signed_body=SIGNATURE.{urllib.parse.quote(params)}"
+
+                with self.http_client.post(
+                    POST_WITH_IMAGE_URL, headers=headers, data=payload
+                ) as res:
+                    post_result = res.json()
+                    if "status" in post_result.keys() and post_result["status"] == "ok":
+                        return True
+                    else:
+                        return False
+            except Exception as e:
+                print("[ERROR] ", e)
+                return False
+        else:
+            return False
+
+    def upload_image(self, image_url: str, image_content: bytes) -> str:
+        headers = POST_HEADERS_DEFAULT.copy()
+        headers.update({"Authorization": f"Bearer IGT:2:{self.token}"})
+
+        upload_id = int(time.time() * 1000)
+        name = f"{upload_id}_0_{random.randint(1000000000, 9999999999)}"
+        url = "https://www.instagram.com/rupload_igphoto/" + name
+
+        if image_content is None:
+            f = open(image_url, mode="rb")
+            content = f.read()
+            f.close()
+            mime_type, _ = mimetypes.guess_type(image_url)
+        else:
+            content = image_content
+            response = requests.head(image_url)
+            content_type = response.headers.get("Content-Type")
+            if not content_type:
+                file_name = url.split("/")[-1]
+                mime_type, _ = mimetypes.guess_type(file_name)
+
+        x_instagram_rupload_params = {
+            "upload_id": f"{upload_id}",
+            "media_type": "1",
+            "sticker_burnin_params": "[]",
+            "image_compression": json.dumps(
+                {"lib_name": "moz", "lib_version": "3.1.m", "quality": "80"}
+            ),
+            "xsharing_user_ids": "[]",
+            "retry_context": {
+                "num_step_auto_retry": "0",
+                "num_reupload": "0",
+                "num_step_manual_retry": "0",
+            },
+            "IG-FB-Xpost-entry-point-v2": "feed",
+        }
+        contentLength = len(content)
+        image_headers = {
+            "X_FB_PHOTO_WATERFALL_ID": str(uuid.uuid4()),
+            "X-Entity-Type": "image/" + mime_type,
+            "Offset": "0",
+            "X-Instagram-Rupload-Params": json.dumps(x_instagram_rupload_params),
+            "X-Entity-Name": f"{name}",
+            "X-Entity-Length": f"{contentLength}",
+            "Content-Type": "application/octet-stream",
+            "Content-Length": f"{contentLength}",
+            "Accept-Encoding": "gzip",
+        }
+
+        headers.update(image_headers)
+        response = self.http_client.post(url, headers=headers, data=content)
+        if response.status_code == 200:
+            return response.text
+        else:
+            return None
+
+    def update_media_with_pdq_hash_info(self, upload_id="87490918227685"):
+        headers = POST_HEADERS_DEFAULT.copy()
+        headers.update({"Authorization": f"Bearer IGT:2:{self.token}"})
+
+        pdq_hash_info = {
+            "pdq_hash": "17b1b91bb94b46e417b1319346b4ce6ce84eec4e46b413b117b1b91bb94b46e4:89",
+            "frame_time": 0,
+        }
+        body_data = {
+            "pdq_hash_info": json.dumps(pdq_hash_info),
+            "_uid": self.user_id,
+            "_uuid": "3d8ce049-3663-4cfe-9417-08d152df3874",
+            "upload_id": f"{upload_id}",
+        }
+
+        body = {"signed_body": f"SIGNATURE.{json.dumps(body_data)}"}
+        response = self.http_client.post(
+            "https://i.instagram.com/api/v1/media/update_media_with_pdq_hash_info/",
+            headers=headers,
+            data=body,
+        )
+        if response.status_code == 200:
+            post_result = response.json()
+            return post_result
