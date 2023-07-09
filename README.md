@@ -1,5 +1,7 @@
 # [<img src="./.github/logo.jpg" width="36" height="36" />](https://github.com/junhoyeo) threads-py
 
+[![pypi](https://img.shields.io/pypi/v/threads-py.svg?style=flat-square&labelColor=black)](https://pypi.org/project/threads-py) [![MIT License](https://img.shields.io/badge/license-MIT-blue?style=flat-square&labelColor=black)](https://github.com/junhoyeo/threads-py/blob/main/LICENSE)
+
 > Unofficial, Reverse-Engineered Python client for Meta's Threads.
 
 ## Installation
@@ -8,7 +10,8 @@
 pip install threads-py
 ```
 
-## Usages
+<details>
+<summary><h3>🚀 Usage (Read)</h3></summary>
 
 ```python
 from threadspy import ThreadsAPI
@@ -53,6 +56,13 @@ print(thread)
 # get who liked a thread
 linkers = api.get_thread_likers(post_id)
 print(linkers)
+```
+</details>
+
+### 🚀 Usage (Write)
+
+```python
+from threadspy import ThreadsAPI
 
 # post publish(account must be public)
 api = ThreadsAPI(username="username", password="password")
@@ -95,6 +105,7 @@ print(check_sum)
   - [ ] 🚧 Reply to existing Thread
 - [x] 🏴‍☠️ Restructure project as an monorepo
   - [ ] 🏴‍☠️ Cool CLI App to run Threads in the Terminal
+
 
 ## License
 
