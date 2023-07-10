@@ -7,7 +7,7 @@ class TestGetUserIdFromUsername(unittest.TestCase):
         self.threads_api = ThreadsAPI(verbose=True)
         self.username = "_junhoyeo"
 
-    def test_fetching_postID_with_threadID(self):
+    def test_get_user_id_from_username(self):
         user_id = self.threads_api.get_user_id_from_username(self.username)
         self.assertIsInstance(user_id, str)
         self.assertEqual(user_id, self.threads_api.user_id)

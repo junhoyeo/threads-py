@@ -7,7 +7,7 @@ class TestGetThreadLikers(unittest.TestCase):
         self.threads_api = ThreadsAPI(verbose=True)
         self.post_id = "3141675920411513399"
 
-    def test_getThreadLikers(self):
+    def test_get_thread_likers(self):
         likers = self.threads_api.get_thread_likers(self.post_id)
 
         self.assertIsInstance(likers.users, list)

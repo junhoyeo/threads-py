@@ -8,7 +8,7 @@ class TestGetPostIDfromThreadID(unittest.TestCase):
         self.thread_id = "CuX_UYABrr7"
         self.post_id = None
 
-    def test_fetching_postID_with_threadID(self):
+    def test_fetching_post_id_with_thread_id(self):
         self.post_id = self.threads_api.get_post_id_from_thread_id(self.thread_id)
         self.assertEqual(self.post_id, "3141257742204189435")
 

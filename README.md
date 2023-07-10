@@ -66,12 +66,12 @@ from threadspy import ThreadsAPI
 
 # post publish(account must be public)
 api = ThreadsAPI(username="username", password="password")
-caption = "Hello World!"
+caption = "🤖 Hello World!"
 check_sum = api.publish(caption)
 print(check_sum)
 
 # post publish with local image
-caption = "Hello World!"
+caption = "🤖 Hello World!"
 check_sum = api.publish_with_image(caption, image_path=".github/logo.jpg")
 print(check_sum)
 
@@ -90,8 +90,6 @@ print(check_sum)
   - [x] ✅ Fetch PostID(`3140957200974444958`) via PostURL(`https://www.threads.net/t/CuW6-7KyXme`)
   - [x] ✅ Read Threads via PostID
   - [x] ✅ Read Likers in Thread via PostID
-  - [ ] 🚧 Read User Followers
-  - [ ] 🚧 Read User Followings
 - [ ] 🚧 LangChain Agent
   - [ ] 🚧 Link Threads & LLaMa
   - [ ] 🚧 Provide statistical analysis of posts in Threads
@@ -100,9 +98,14 @@ print(check_sum)
   - [x] ✅ Create new Thread with text
     - [ ] 🚧 Make link previews to get shown
   - [x] ✅ Create new Thread with media
-    - [x] ✅ Create new Thread with image
-    - [ ] 🚧 Create new Thread with video
-  - [ ] 🚧 Reply to existing Thread
+  - [ ] 🚧 Create new Thread with a multiple images
+  - [x] ✅ Reply to existing Thread
+- [x] ✅ Friendships
+  - [x] ✅ Follow User
+  - [x] ✅ Unfollow User
+- [x] ✅ Interactions
+  - [x] ✅ Like Thread
+  - [x] ✅ Unike Thread
 - [x] 🏴‍☠️ Restructure project as an monorepo
   - [ ] 🏴‍☠️ Cool CLI App to run Threads in the Terminal
 

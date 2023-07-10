@@ -8,7 +8,7 @@ class TestGetUserProfileReplies(unittest.TestCase):
         self.username = "_junhoyeo"
         self.user_id = "5438123050"
 
-    def test_getUserProfileReplies(self):
+    def test_get_user_profile_replies(self):
         posts = self.threads_api.get_user_profile_replies(
             username=self.username, user_id=self.user_id
         )
