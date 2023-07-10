@@ -8,14 +8,15 @@ class TestPublishWithImage(unittest.TestCase):
 
     def test_publish_with_local_image(self):
         check_sum = self.threads_api.publish_with_image(
-            "Hello World!", image_path=".github/logo.jpg"
+            "🤖 Hello World!", image_path=".github/logo.jpg"
         )
         self.assertEqual(check_sum, True)
 
     def test_publish_with_image_url(self):
+        image_path = "https://github.com/junhoyeo/threads-py/blob/main/.github/logo.jpg?raw=true"
         check_sum = self.threads_api.publish_with_image(
-            "Hello World!",
-            image_path="https://github.com/junhoyeo/threads-py/blob/main/.github/logo.jpg?raw=true",
+            "🤖 Hello World!",
+            image_path=image_path,
         )
         self.assertEqual(check_sum, True)
 
