@@ -7,7 +7,7 @@ class TestGetThreads(unittest.TestCase):
         self.threads_api = ThreadsAPI(verbose=True)
         self.post_id = "3140957200974444958"  # https://www.threads.net/t/CuW6-7KyXme
 
-    def test_getThreads(self):
+    def test_get_threads(self):
         thread = self.threads_api.get_threads(self.post_id)
 
         self.assertIn("reply_threads", thread.to_dict().keys())

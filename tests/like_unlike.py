@@ -9,16 +9,14 @@ class TestLikeAndUnLike(unittest.TestCase):
             username="username",
             password="password",
         )
-        self.username = "zuck"
+        self.post_id = "3140957200974444958"
 
     def test_like(self):
-        target_user_id = self.threads_api.get_user_id_from_username(self.username)
-        check_sum = self.threads_api.follow(user_id=target_user_id)
+        check_sum = self.threads_api.like(post_id=self.post_id)
         self.assertEqual(check_sum, True)
 
     def test_unlike(self):
-        target_user_id = self.threads_api.get_user_id_from_username(self.username)
-        check_sum = self.threads_api.unfollow(user_id=target_user_id)
+        check_sum = self.threads_api.unlike(post_id=self.post_id)
         self.assertEqual(check_sum, True)
 
 
