@@ -8,11 +8,22 @@ class TestPublish(unittest.TestCase):
             verbose=True,
             username="username",
             password="password",
-            token="eyJkc191c2VyX2lkIjoiNTg0NTY2MDA5NDciLCJzZXNzaW9uaWQiOiI1ODQ1NjYwMDk0NyUzQWJaTm9NUEFOTVFYVGs3JTNBMTQlM0FBWWQ1c083WGg1Qy1RRjVHUWd6QWNOQWRDT2dzZl9zcXBIeVFNT0NPTncifQ==",
         )
 
     def test_publish(self):
         check_sum = self.threads_api.publish("🤖 Hello World!")
+        self.assertEqual(check_sum, True)
+
+    def test_publish_with_attach_link(self):
+        check_sum = self.threads_api.publish(
+            "🤖 Hello World!", url="https://github.com/junhoyeo/threads-py)"
+        )
+        self.assertEqual(check_sum, True)
+
+    def test_publish_with_reply(self):
+        parent_post_url = "https://www.threads.net/t/CugF-EjhQ3r"
+        parent_post_id = self.threads_api.get_post_id_from_url(parent_post_url)
+        check_sum = self.threads_api.publish("🤖 Hello World!", parent_post_id=parent_post_id)
         self.assertEqual(check_sum, True)
 
     def test_publish_with_image_url(self):

@@ -76,8 +76,67 @@ check_sum = api.publish_with_image(caption, image_path=".github/logo.jpg")
 print(check_sum)
 
 # post publish with url image
-check_sum = api.publish_with_image(caption, image_path="https://github.com/junhoyeo/threads-py/blob/main/.github/logo.jpg?raw=true")
+check_sum = api.publish_with_image(caption, image_path="https://github.com/junhoyeo/threads-py/raw/main/.github/logo.jpg")
 print(check_sum)
+```
+
+### 🚀 Usage (Write)
+
+### New API (from v1.2.0)
+
+#### ✨ Text Threads
+
+```python
+from threadspy import ThreadsAPI
+
+api = ThreadsAPI(username="username", password="password")
+api.publish(caption="🤖 Hello World!")
+```
+
+#### ✨ Threads with Image
+
+```python
+api.publish(caption= '🤖 Threads with Link Image', image_path="https://github.com/junhoyeo/threads-py/raw/main/.github/logo.jpg")
+```
+
+#### ✨ Threads with Link Attachment
+
+```python
+api.publish(caption= '🤖 Threads with Link Attachment', url="https://github.com/junhoyeo/threads-py)")
+```
+
+#### ✨ Reply to Other Threads
+
+```python
+parent_post_url = 'https://www.threads.net/t/CugF-EjhQ3r'
+parent_post_id = api.get_post_id_from_url(parent_post_url) # or use `get_post_id_from_thread_id`
+
+api.publish({
+  text: '🤖 Beep',
+  link: 'https://github.com/junhoyeo/threads-py',
+  parent_post_id: parent_post_id,
+});
+```
+
+#### ✨ Like/Unlike a Thread (from v1.3.0)
+
+```python
+post_url = 'https://www.threads.net/t/CugF-EjhQ3r'
+post_id = api.get_post_id_from_url(post_url) # or use `get_post_id_from_thread_id`
+
+# 💡 Uses current credentials
+api.like(postIDToLike);
+api.unlike(postIDToLike);
+```
+
+#### ✨ Follow/Unfollow a User (from v1.3.0)
+
+```python
+user_id_to_follow = api.get_user_id_from_username('junhoyeo')
+
+# 💡 Uses current credentials
+api.follow(user_id_to_follow);
+api.unfollow(user_id_to_follow);
 ```
 
 ## [<img src="./.github/emojis/pushpin.png" width="30" height="30" />](https://github.com/junhoyeo) Roadmap
