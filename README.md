@@ -61,28 +61,7 @@ print(linkers)
 
 ### 🚀 Usage (Write)
 
-```python
-from threadspy import ThreadsAPI
-
-# post publish(account must be public)
-api = ThreadsAPI(username="username", password="password")
-caption = "🤖 Hello World!"
-check_sum = api.publish(caption)
-print(check_sum)
-
-# post publish with local image
-caption = "🤖 Hello World!"
-check_sum = api.publish_with_image(caption, image_path=".github/logo.jpg")
-print(check_sum)
-
-# post publish with url image
-check_sum = api.publish_with_image(caption, image_path="https://github.com/junhoyeo/threads-py/raw/main/.github/logo.jpg")
-print(check_sum)
-```
-
-### 🚀 Usage (Write)
-
-### New API (from v1.2.0)
+### New API (from v0.0.6)
 
 #### ✨ Text Threads
 
@@ -115,28 +94,28 @@ api.publish({
   text: '🤖 Beep',
   link: 'https://github.com/junhoyeo/threads-py',
   parent_post_id: parent_post_id,
-});
+})
 ```
 
-#### ✨ Like/Unlike a Thread (from v1.3.0)
+#### ✨ Like/Unlike a Thread (from v0.0.7)
 
 ```python
 post_url = 'https://www.threads.net/t/CugF-EjhQ3r'
 post_id = api.get_post_id_from_url(post_url) # or use `get_post_id_from_thread_id`
 
 # 💡 Uses current credentials
-api.like(postIDToLike);
-api.unlike(postIDToLike);
+api.like(postIDToLike)
+api.unlike(postIDToLike)
 ```
 
-#### ✨ Follow/Unfollow a User (from v1.3.0)
+#### ✨ Follow/Unfollow a User (from v0.0.7)
 
 ```python
 user_id_to_follow = api.get_user_id_from_username('junhoyeo')
 
 # 💡 Uses current credentials
-api.follow(user_id_to_follow);
-api.unfollow(user_id_to_follow);
+api.follow(user_id_to_follow)
+api.unfollow(user_id_to_follow)
 ```
 
 ## [<img src="./.github/emojis/pushpin.png" width="30" height="30" />](https://github.com/junhoyeo) Roadmap
