@@ -299,11 +299,12 @@ class ThreadsAPI:
         Returns:
             str: a post id
         """
-        thread_id = thread_id.split("?")[0]
-        thread_id = thread_id.replace("/", "")
-        post_url = f"https://www.threads.net/t/{thread_id}"
-        result = self.get_post_id_from_url(post_url=post_url)
-        return result
+        alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_'
+        post_id = 0
+        for letter in thread_id:
+            post_id = (post_id * 64) + alphabet.index(letter)
+
+        return str(post_id)
 
     def get_post_id_from_url(self, post_url) -> str:
         """
