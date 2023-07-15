@@ -3,12 +3,20 @@ import re
 import time
 import json
 import uuid
+import base64
 import urllib
+from urllib.parse import quote
 import random
 import requests
 import mimetypes
 from typing import List
-from datetime import datetime, timezone
+from datetime import datetime
+from Crypto.Random import get_random_bytes
+from Crypto.PublicKey import RSA
+from Crypto.Cipher import (
+    AES,
+    PKCS1_v1_5,
+)
 
 from threadspy.types import (
     Thread,
@@ -43,31 +51,41 @@ class ThreadsAPI:
     token = None
     device_id = DEFAULT_DEVICE_ID
     http_client = requests.Session()
+    timestamp_string = None
+    encrypted_password = None
 
     def __init__(
         self,
-        verbose=None,
-        noUpdateLSD=None,
-        fbLSDToken=None,
-        username=None,
-        password=None,
-        device_id=None,
-        token=None,
-    ):
-        if fbLSDToken is not None and "<class 'str'>" == str(type(fbLSDToken)):
+        verbose: str | None = None,
+        noUpdateLSD: str | None = None,
+        fbLSDToken: str | None = None,
+        username: str | None = None,
+        password: str | None = None,
+        device_id: str | None = None,
+        token: str | None = None,
+    ) -> None:
+
+        if fbLSDToken is not None and isinstance(fbLSDToken, str):
             self.fbLSDToken = fbLSDToken
-        if username is not None and "<class 'str'>" == str(type(username)):
-            self.username = username
-        if password is not None and "<class 'str'>" == str(type(password)):
-            self.password = password
-        if device_id is not None and "<class 'str'>" == str(type(device_id)):
+        if device_id is not None and isinstance(device_id, str):
             self.device_id = device_id
-        if noUpdateLSD is not None and "<class 'bool'>" == str(type(noUpdateLSD)):
+        if noUpdateLSD is not None and  isinstance(noUpdateLSD, str):
             self.noUpdateLSD = noUpdateLSD
-        if verbose is not None and "<class 'bool'>" == str(type(verbose)):
+        if verbose is not None and  isinstance(verbose, str):
             self.verbose = verbose
-        if token is not None and "<class 'str'>" == str(type(token)):
+
+        if username is not None and isinstance(username, str) \
+            and password is not None and isinstance(password, str):
+            self.username = username
+            self.password = password
+            self.public_key,self.public_key_id = self._get_ig_public_key()
+            self.encrypted_password, self.timestamp_string = self._password_encryption(password)
+
+        if token is not None and isinstance(token, str):
             self.token = token
+        else:
+            self.token = self.get_token()
+
 
     def __is_valid_url(self, url: str) -> bool:
         url_pattern = re.compile(r"https?://(?:[-\w.]|(?:%[\da-fA-F]{2}))+")
@@ -115,6 +133,65 @@ class ThreadsAPI:
             headers["referer"] = f"https://www.threads.net/@{username}"
 
         return headers
+
+    def _get_ig_public_key(self) -> tuple[str, int]:
+        """
+        Get Instagram public key to encrypt the password.
+
+        Returns:
+            The public key and the key identifier as tuple(str, int).
+        """
+        str_parameters = json.dumps(
+            {
+                'id': str(uuid.uuid4()),
+            },
+        )
+        encoded_parameters = quote(string=str_parameters, safe="!~*'()")
+
+        response = requests.post(
+            url=f'{BASE_API_URL}/qe/sync/',
+            headers={
+                'User-Agent': f'Barcelona {LATEST_ANDROID_APP_VERSION} Android',
+                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+            },
+            data=f'params={encoded_parameters}',
+        )
+        public_key = response.headers.get('ig-set-password-encryption-pub-key')
+        public_key_id = response.headers.get('ig-set-password-encryption-key-id')
+
+        return public_key, int(public_key_id)
+
+    def _password_encryption(self, password: str) -> tuple[str, str]:
+        password_bytes = password.encode('utf-8')
+
+        timestamp = int(time.time())
+        timestamp_string = str(timestamp).encode('utf-8')
+
+        secret_key = get_random_bytes(32)
+        key_id_mixed_bytes = int(1).to_bytes(1, 'big') + self.public_key_id.to_bytes(1, 'big')
+        initialization_vector = get_random_bytes(12)
+        encrypted_rsa_key_mixed_bytes = int(0).to_bytes(1, 'big') + int(1).to_bytes(1, 'big')
+        public_key_bytes = base64.b64decode(self.public_key)
+        public_key = RSA.import_key(extern_key=public_key_bytes)
+        cipher = PKCS1_v1_5.new(public_key)
+        encrypted_secret_key = cipher.encrypt(secret_key)
+        cipher = AES.new(secret_key, AES.MODE_GCM, nonce=initialization_vector)
+        cipher.update(timestamp_string)
+        encrypted_password, auth_tag = cipher.encrypt_and_digest(password_bytes)
+
+        password_as_encryption_sequence = (
+            key_id_mixed_bytes
+            + initialization_vector
+            + encrypted_rsa_key_mixed_bytes
+            + encrypted_secret_key
+            + auth_tag
+            + encrypted_password
+        )
+        password_encryption_base64 = base64.b64encode(
+            s=password_as_encryption_sequence,
+        ).decode('ascii')
+
+        return password_encryption_base64, str(timestamp)
 
     def get_user_id_from_username(self, username) -> str:
         """
@@ -436,17 +513,12 @@ class ThreadsAPI:
         Returns:
             str: validate token string None if not valid
         """
-        if self.username is None or self.password is None:
-            return None
-        if self.token:
-            return self.token
         try:
             blockVersion = "5f56efad68e1edec7801f630b5c122704ec5378adbee6609a448f105f34a9c73"
-            headers = self.__get_app_headers()
             params = json.dumps(
                 {
                     "client_input_params": {
-                        "password": self.password,
+                        "password": f'#PWD_INSTAGRAM:4:{self.timestamp_string}:{self.encrypted_password}',
                         "contact_point": self.username,
                         "device_id": self.device_id,
                     },
@@ -454,26 +526,36 @@ class ThreadsAPI:
                         "credential_type": "password",
                         "device_id": self.device_id,
                     },
-                }
+                },
             )
             bk_client_context = json.dumps(
                 {"bloks_version": blockVersion, "styles_id": "instagram"}
             )
-            payload = f"params={urllib.parse.quote(params)}&bk_client_context={urllib.parse.quote(bk_client_context)}&bloks_versioning_id={blockVersion}"
-            response = requests.post(LOGIN_URL, timeout=60 * 1000, headers=headers, data=payload)
+            params_quote = quote(string=params, safe="!~*'()")
+            bk_client_context_quote = quote(string=bk_client_context, safe="!~*'()")
+
+            response = requests.post(
+                url=f'{BASE_API_URL}/bloks/apps/com.bloks.www.bloks.caa.login.async.send_login_request/',
+                headers={
+                    'User-Agent': 'Barcelona 289.0.0.77.109 Android',
+                    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                },
+                data=f'params={params_quote}&bk_client_context={bk_client_context_quote}&bloks_versioning_id={blockVersion}',
+            )
+
             data = response.text
             if data == "Oops, an error occurred.":
                 return None
-            pos = data.split("Bearer IGT:2:")
-            if len(pos) > 1:
-                pos = pos[1]
-                pos = pos.split("==")[0]
-                token = f"{pos}=="
-                self.token = token
-                return self.token
-            return None
+            pos = data.find('Bearer IGT:2:')
+            data_txt = data[pos:]
+            backslash_pos = data_txt.find('\\\\')
+            token = data_txt[13:backslash_pos]
+
+            return token
+
         except Exception as e:
             print("[ERROR] ", e)
+
             return None
 
     def publish(
