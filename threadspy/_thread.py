@@ -3,12 +3,20 @@ import re
 import time
 import json
 import uuid
+import base64
 import urllib
+from urllib.parse import quote
 import random
 import requests
 import mimetypes
 from typing import List
-from datetime import datetime, timezone
+from datetime import datetime
+from Crypto.Random import get_random_bytes
+from Crypto.PublicKey import RSA
+from Crypto.Cipher import (
+    AES,
+    PKCS1_v1_5,
+)
 
 from threadspy.types import (
     Thread,
@@ -43,31 +51,41 @@ class ThreadsAPI:
     token = None
     device_id = DEFAULT_DEVICE_ID
     http_client = requests.Session()
+    timestamp_string = None
+    encrypted_password = None
 
     def __init__(
         self,
-        verbose=None,
-        noUpdateLSD=None,
-        fbLSDToken=None,
-        username=None,
-        password=None,
-        device_id=None,
-        token=None,
-    ):
-        if fbLSDToken is not None and "<class 'str'>" == str(type(fbLSDToken)):
+        verbose: str | None = None,
+        noUpdateLSD: str | None = None,
+        fbLSDToken: str | None = None,
+        username: str | None = None,
+        password: str | None = None,
+        device_id: str | None = None,
+        token: str | None = None,
+    ) -> None:
+
+        if fbLSDToken is not None and isinstance(fbLSDToken, str):
             self.fbLSDToken = fbLSDToken
-        if username is not None and "<class 'str'>" == str(type(username)):
-            self.username = username
-        if password is not None and "<class 'str'>" == str(type(password)):
-            self.password = password
-        if device_id is not None and "<class 'str'>" == str(type(device_id)):
+        if device_id is not None and isinstance(device_id, str):
             self.device_id = device_id
-        if noUpdateLSD is not None and "<class 'bool'>" == str(type(noUpdateLSD)):
+        if noUpdateLSD is not None and  isinstance(noUpdateLSD, str):
             self.noUpdateLSD = noUpdateLSD
-        if verbose is not None and "<class 'bool'>" == str(type(verbose)):
+        if verbose is not None and  isinstance(verbose, str):
             self.verbose = verbose
-        if token is not None and "<class 'str'>" == str(type(token)):
+
+        if username is not None and isinstance(username, str) \
+            and password is not None and isinstance(password, str):
+            self.username = username
+            self.password = password
+            self.public_key,self.public_key_id = self._get_ig_public_key()
+            self.encrypted_password, self.timestamp_string = self._password_encryption(password)
+
+        if token is not None and isinstance(token, str):
             self.token = token
+        else:
+            self.token = self.get_token()
+
 
     def __is_valid_url(self, url: str) -> bool:
         url_pattern = re.compile(r"https?://(?:[-\w.]|(?:%[\da-fA-F]{2}))+")
@@ -115,6 +133,33 @@ class ThreadsAPI:
             headers["referer"] = f"https://www.threads.net/@{username}"
 
         return headers
+
+    def _get_ig_public_key(self) -> tuple[str, int]:
+        """
+        Get Instagram public key to encrypt the password.
+
+        Returns:
+            The public key and the key identifier as tuple(str, int).
+        """
+        str_parameters = json.dumps(
+            {
+                'id': str(uuid.uuid4()),
+            },
+        )
+        encoded_parameters = quote(string=str_parameters, safe="!~*'()")
+
+        response = requests.post(
+            url=f'{BASE_API_URL}/qe/sync/',
+            headers={
+                'User-Agent': f'Barcelona {LATEST_ANDROID_APP_VERSION} Android',
+                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+            },
+            data=f'params={encoded_parameters}',
+        )
+        public_key = response.headers.get('ig-set-password-encryption-pub-key')
+        public_key_id = response.headers.get('ig-set-password-encryption-key-id')
+
+        return public_key, int(public_key_id)
 
     def get_user_id_from_username(self, username) -> str:
         """
