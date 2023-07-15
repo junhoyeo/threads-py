@@ -161,6 +161,38 @@ class ThreadsAPI:
 
         return public_key, int(public_key_id)
 
+    def _password_encryption(self, password: str) -> tuple[str, str]:
+        password_bytes = password.encode('utf-8')
+
+        timestamp = int(time.time())
+        timestamp_string = str(timestamp).encode('utf-8')
+
+        secret_key = get_random_bytes(32)
+        key_id_mixed_bytes = int(1).to_bytes(1, 'big') + self.public_key_id.to_bytes(1, 'big')
+        initialization_vector = get_random_bytes(12)
+        encrypted_rsa_key_mixed_bytes = int(0).to_bytes(1, 'big') + int(1).to_bytes(1, 'big')
+        public_key_bytes = base64.b64decode(self.public_key)
+        public_key = RSA.import_key(extern_key=public_key_bytes)
+        cipher = PKCS1_v1_5.new(public_key)
+        encrypted_secret_key = cipher.encrypt(secret_key)
+        cipher = AES.new(secret_key, AES.MODE_GCM, nonce=initialization_vector)
+        cipher.update(timestamp_string)
+        encrypted_password, auth_tag = cipher.encrypt_and_digest(password_bytes)
+
+        password_as_encryption_sequence = (
+            key_id_mixed_bytes
+            + initialization_vector
+            + encrypted_rsa_key_mixed_bytes
+            + encrypted_secret_key
+            + auth_tag
+            + encrypted_password
+        )
+        password_encryption_base64 = base64.b64encode(
+            s=password_as_encryption_sequence,
+        ).decode('ascii')
+
+        return password_encryption_base64, str(timestamp)
+
     def get_user_id_from_username(self, username) -> str:
         """
         set user id by username.
