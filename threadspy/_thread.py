@@ -513,17 +513,12 @@ class ThreadsAPI:
         Returns:
             str: validate token string None if not valid
         """
-        if self.username is None or self.password is None:
-            return None
-        if self.token:
-            return self.token
         try:
             blockVersion = "5f56efad68e1edec7801f630b5c122704ec5378adbee6609a448f105f34a9c73"
-            headers = self.__get_app_headers()
             params = json.dumps(
                 {
                     "client_input_params": {
-                        "password": self.password,
+                        "password": f'#PWD_INSTAGRAM:4:{self.timestamp_string}:{self.encrypted_password}',
                         "contact_point": self.username,
                         "device_id": self.device_id,
                     },
@@ -531,26 +526,36 @@ class ThreadsAPI:
                         "credential_type": "password",
                         "device_id": self.device_id,
                     },
-                }
+                },
             )
             bk_client_context = json.dumps(
                 {"bloks_version": blockVersion, "styles_id": "instagram"}
             )
-            payload = f"params={urllib.parse.quote(params)}&bk_client_context={urllib.parse.quote(bk_client_context)}&bloks_versioning_id={blockVersion}"
-            response = requests.post(LOGIN_URL, timeout=60 * 1000, headers=headers, data=payload)
+            params_quote = quote(string=params, safe="!~*'()")
+            bk_client_context_quote = quote(string=bk_client_context, safe="!~*'()")
+
+            response = requests.post(
+                url=f'{BASE_API_URL}/bloks/apps/com.bloks.www.bloks.caa.login.async.send_login_request/',
+                headers={
+                    'User-Agent': 'Barcelona 289.0.0.77.109 Android',
+                    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                },
+                data=f'params={params_quote}&bk_client_context={bk_client_context_quote}&bloks_versioning_id={blockVersion}',
+            )
+
             data = response.text
             if data == "Oops, an error occurred.":
                 return None
-            pos = data.split("Bearer IGT:2:")
-            if len(pos) > 1:
-                pos = pos[1]
-                pos = pos.split("==")[0]
-                token = f"{pos}=="
-                self.token = token
-                return self.token
-            return None
+            pos = data.find('Bearer IGT:2:')
+            data_txt = data[pos:]
+            backslash_pos = data_txt.find('\\\\')
+            token = data_txt[13:backslash_pos]
+
+            return token
+
         except Exception as e:
             print("[ERROR] ", e)
+
             return None
 
     def publish(
