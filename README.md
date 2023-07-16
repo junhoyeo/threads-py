@@ -165,6 +165,16 @@ user_id = api.get_user_id_from_username('junhoyeo')
 api.friendship_status(user_id)
 ```
 
+#### 🧑‍🦳 Get User Followings and Followers
+
+```python
+user_id = api.get_user_id_from_username('junhoyeo')
+
+# 💡 Uses current credentials
+api.get_followings(user_id)
+api.get_followers(user_id)
+```
+
 
 ## [<img src="./.github/emojis/pushpin.png" width="30" height="30" />](https://github.com/junhoyeo) Roadmap
 
@@ -179,12 +189,13 @@ api.friendship_status(user_id)
   - [x] ✅ Fetch PostID(`3140957200974444958`) via ThreadID(`CuW6-7KyXme`) or PostURL(`https://www.threads.net/t/CuW6-7KyXme`)
   - [x] ✅ Read Threads via PostID
   - [x] ✅ Read Likers in Thread via PostID
-  - [ ] 🚧 Read User Followers
-  - [ ] 🚧 Read User Followings
 - [ ] 🚧 LangChain Agent (`threadspy.ai`)
   - [ ] 🚧 Threads Tool for LangChain
   - [ ] 📌 Link Threads & LLaMa ([@Mineru98](https://github.com/Mineru98))
   - [ ] 📌 Provide statistical analysis of posts in Threads ([@Mineru98](https://github.com/Mineru98))
+- [x] ✅ Read user private data
+  - [x] ✅ Read User Followers
+  - [x] ✅ Read User Followings
 - [ ] 🚧 Write data (i.e. write automated Threads)
   - [ ] 🚧 Create new Thread with text
     - [ ] 🚧 Make link previews to get shown
