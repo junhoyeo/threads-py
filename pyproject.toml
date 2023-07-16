@@ -19,6 +19,7 @@ python = ">=3.8.1,<4.0"
 requests = "^2.31.0"
 dataclasses = "^0.6"
 dataclasses-json = "^0.5.9"
+pycrypto = "^2.6.1"
 
 [tool.poetry.group.ai]
 optional = true

@@ -718,6 +718,16 @@ files = [
 ]
 
 [[package]]
+name = "pycrypto"
+version = "2.6.1"
+description = "Cryptographic modules for Python."
+optional = false
+python-versions = "*"
+files = [
+    {file = "pycrypto-2.6.1.tar.gz", hash = "sha256:f2ce1e989b272cfcb677616763e0a2e7ec659effa67a88aa92b3a65528f60a3c"},
+]
+
+[[package]]
 name = "pydantic"
 version = "1.10.11"
 description = "Data validation and settings management using python type hints"
@@ -1064,4 +1074,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8.1,<4.0"
-content-hash = "3a3b43cdb32c9ab4eb46d4e41bb0d985a01f6f4bd795b2d25dbf1a9e66529e2b"
+content-hash = "b3a85c3dfee05db3f7266d2e53401f6b2da002b85fec1d091d8a67d578e410d3"
