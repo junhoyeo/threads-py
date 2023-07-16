@@ -599,6 +599,66 @@ class ThreadsAPI:
             print("[UNBLOCK]", response.json())
         return response.json()["status"] == "ok"
 
+    def restrict(self, user_id: str) -> bool:
+        """
+        Restrict a user.
+
+        Args:
+            user_id (str): user identifier
+
+        Returns:
+            boolean and if verbose mode is enabled, prints response dict
+        """
+        params = quote(
+            string=json.dumps(
+                obj={
+                "user_ids": user_id,
+                "container_module": "ig_text_feed_timeline",
+                },
+                ),
+            safe="!~*'()"
+            )
+
+        response = self.http_client.post(
+            url=f'{BASE_API_URL}/restrict_action/restrict_many/',
+            headers=self.__get_app_headers(),
+            data=f'signed_body=SIGNATURE.{params}',
+        )
+
+        if self.verbose:
+            print("[RESTRICT]", response.json())
+        return response.json()["status"] == "ok"
+
+    def unrestrict(self, user_id: str) -> bool:
+        """
+        Unrestrict a user.
+
+        Args:
+            user_id (str): user identifier
+
+        Returns:
+            boolean and if verbose mode is enabled, prints response dict
+        """
+        params = quote(
+            string=json.dumps(
+                obj={
+                "target_user_id": user_id,
+                "container_module": "ig_text_feed_timeline",
+                },
+                ),
+            safe="!~*'()"
+            )
+
+        response = self.http_client.post(
+            url=f'{BASE_API_URL}/restrict_action/unrestrict/',
+            headers=self.__get_app_headers(),
+            data=f'signed_body=SIGNATURE.{params}',
+        )
+
+        if self.verbose:
+            print("[UNRESTRICT]", response.json())
+        return response.json()["status"] == "ok"
+
     def mute(self, user_id: str) -> bool:
         """
         Mutes a user.
