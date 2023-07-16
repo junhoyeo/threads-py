@@ -538,6 +538,67 @@ class ThreadsAPI:
             print("[UNFOLLOW]", res.json())
         return res.json()["status"] == "ok"
 
+    def block(self, user_id: str) -> bool:
+        """
+        Blocks a user.
+
+        Args:
+            user_id (str): user identifier
+
+        Returns:
+            boolean and if verbose mode is enabled, prints response dict
+        """
+        params = quote(
+            string=json.dumps(
+                obj={
+                "user_id": user_id,
+                "surface": "ig_text_feed_timeline",
+                "is_auto_block_enabled": "true",
+                },
+                ),
+            safe="!~*'()"
+            )
+
+        response = self.http_client.post(
+            url=f'{BASE_API_URL}/friendships/block/{user_id}/',
+            headers=self.__get_app_headers(),
+            data=f'signed_body=SIGNATURE.{params}',
+        )
+
+        if self.verbose:
+            print("[BLOCK]", response.json())
+        return response.json()["status"] == "ok"
+
+    def unblock(self, user_id: str) -> bool:
+        """
+        Unblocks a user.
+
+        Args:
+            user_id (str): user identifier
+
+        Returns:
+            boolean and if verbose mode is enabled, prints response dict
+        """
+        params = quote(
+            string=json.dumps(
+                obj={
+                "user_id": user_id,
+                "surface": "ig_text_feed_timeline",
+                },
+                ),
+            safe="!~*'()"
+            )
+
+        response = self.http_client.post(
+            url=f'{BASE_API_URL}/friendships/unblock/{user_id}/',
+            headers=self.__get_app_headers(),
+            data=f'signed_body=SIGNATURE.{params}',
+        )
+
+        if self.verbose:
+            print("[UNBLOCK]", response.json())
+        return response.json()["status"] == "ok"
+
     def get_token(self) -> str:
         """
         set fb login token
