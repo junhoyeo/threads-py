@@ -53,7 +53,7 @@ class ThreadsAPI:
 
     def __init__(
         self,
-        verbose: str | None = None,
+        verbose: True | False = None,
         noUpdateLSD: str | None = None,
         fbLSDToken: str | None = None,
         username: str | None = None,
@@ -67,7 +67,7 @@ class ThreadsAPI:
             self.device_id = device_id
         if noUpdateLSD is not None and isinstance(noUpdateLSD, str):
             self.noUpdateLSD = noUpdateLSD
-        if verbose is not None and isinstance(verbose, str):
+        if verbose is not None and isinstance(verbose, bool):
             self.verbose = verbose
 
         if (
@@ -87,6 +87,7 @@ class ThreadsAPI:
             self.token = token
         else:
             self.token = self.get_token()
+            self.user_id = self.get_user_id_from_username(username)
 
     def __is_valid_url(self, url: str) -> bool:
         url_pattern = re.compile(r"https?://(?:[-\w.]|(?:%[\da-fA-F]{2}))+")
@@ -487,23 +488,43 @@ class ThreadsAPI:
             token = self.token
         if token is None:
             raise "Token not found"
-        headers = self.__get_default_headers()
-        res = self.http_client.post(url, headers=headers)
-        return res
+        headers = self.__get_app_headers()
+        response = self.http_client.post(url, headers=headers)
+        return response
 
     def like(self, post_id: str) -> bool:
-        user_id = self.get_current_user_id()
-        res = self.__toggle_auth__post_request(
-            f"{BASE_API_URL}/api/v1/media/{post_id}_${user_id}/like/"
-        )
-        return res.json()["status"] == "ok"
+        """
+        like a post.
+
+        Args:
+            post_id (str): post identifier
+
+        Returns:
+            boolean and if verbose mode is enabled, prints response dict
+        """
+        user_id = self.user_id or self.get_current_user_id()
+        response = self.__toggle_auth__post_request(
+            url=f'{BASE_API_URL}/media/{post_id}_{user_id}/like/',)
+        if self.verbose:
+            print("[LIKE]", response.json())
+        return response.json()["status"] == "ok"
 
     def unlike(self, post_id: str) -> bool:
-        user_id = self.get_current_user_id()
-        res = self.__toggle_auth__post_request(
-            f"{BASE_API_URL}/api/v1/media/{post_id}_${user_id}/unlike/"
-        )
-        return res.json()["status"] == "ok"
+        """
+        takes your like back from a post.
+
+        Args:
+            post_id (str): post identifier
+
+        Returns:
+            boolean and if verbose mode is enabled, prints response dict
+        """
+        user_id = self.user_id or self.get_current_user_id()
+        response = self.__toggle_auth__post_request(
+            f"{BASE_API_URL}/media/{post_id}_{user_id}/unlike/",)
+        if self.verbose:
+            print("[UNLIKE]", response.json())
+        return response.json()["status"] == "ok"
 
     def follow(self, user_id: str) -> bool:
         res = self.__toggle_auth__post_request(
