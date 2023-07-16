@@ -4,6 +4,8 @@
 
 > Unofficial, Reverse-Engineered Python client for Meta's Threads.
 
+**Looking for the TypeScript version?** _Check out **[junhoyeo/threads-api. ![](https://img.shields.io/github/stars/junhoyeo%2Fthreads-api?style=social)](https://github.com/junhoyeo/threads-api)**_
+
 ## Installation
 
 ```bash
@@ -57,7 +59,6 @@ print(thread)
 linkers = api.get_thread_likers(post_id)
 print(linkers)
 ```
-
 </details>
 
 ### 🚀 Usage (Write)
