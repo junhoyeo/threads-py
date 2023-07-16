@@ -504,7 +504,7 @@ class ThreadsAPI:
         """
         user_id = self.user_id or self.get_current_user_id()
         response = self.__toggle_auth__post_request(
-            url=f'{BASE_API_URL}/media/{post_id}_{user_id}/like/',)
+            url=f'{BASE_API_URL}/api/v1/media/{post_id}_{user_id}/like/',)
         if self.verbose:
             print("[LIKE]", response.json())
         return response.json()["status"] == "ok"
@@ -521,7 +521,7 @@ class ThreadsAPI:
         """
         user_id = self.user_id or self.get_current_user_id()
         response = self.__toggle_auth__post_request(
-            f"{BASE_API_URL}/media/{post_id}_{user_id}/unlike/",)
+            f"{BASE_API_URL}/api/v1/media/{post_id}_{user_id}/unlike/",)
         if self.verbose:
             print("[UNLIKE]", response.json())
         return response.json()["status"] == "ok"
@@ -537,19 +537,20 @@ class ThreadsAPI:
             dict:{A list of users}.
         """
         response = self.http_client.get(
-            url=f'{BASE_API_URL}/users/search/?q={search_parameter}',
+            url=f'{BASE_API_URL}/api/v1/users/search/?q={search_parameter}',
             headers=self.__get_app_headers(),
             )
-        return response if response.status_code is not 200 else response.json()
+        print("URL:", f'{BASE_API_URL}/api/v1/users/search/?q={search_parameter}')
+        return response if response.status_code != 200 else response.json()
 
     def follow(self, user_id: str) -> bool:
-        res = self.__toggle_auth__post_request(f"{BASE_API_URL}/friendships/create/{user_id}/")
+        res = self.__toggle_auth__post_request(f"{BASE_API_URL}/api/v1/friendships/create/{user_id}/")
         if self.verbose:
             print("[FOLLOW]", res.json())
         return res.json()["status"] == "ok"
 
     def unfollow(self, user_id: str) -> bool:
-        res = self.__toggle_auth__post_request(f"{BASE_API_URL}/friendships/destroy/{user_id}/")
+        res = self.__toggle_auth__post_request(f"{BASE_API_URL}/api/v1/friendships/destroy/{user_id}/")
         if self.verbose:
             print("[UNFOLLOW]", res.json())
         return res.json()["status"] == "ok"
@@ -576,7 +577,7 @@ class ThreadsAPI:
             )
 
         response = self.http_client.post(
-            url=f'{BASE_API_URL}/friendships/block/{user_id}/',
+            url=f'{BASE_API_URL}/api/v1/friendships/block/{user_id}/',
             headers=self.__get_app_headers(),
             data=f'signed_body=SIGNATURE.{params}',
         )
@@ -606,7 +607,7 @@ class ThreadsAPI:
             )
 
         response = self.http_client.post(
-            url=f'{BASE_API_URL}/friendships/unblock/{user_id}/',
+            url=f'{BASE_API_URL}/api/v1/friendships/unblock/{user_id}/',
             headers=self.__get_app_headers(),
             data=f'signed_body=SIGNATURE.{params}',
         )
@@ -636,7 +637,7 @@ class ThreadsAPI:
             )
 
         response = self.http_client.post(
-            url=f'{BASE_API_URL}/restrict_action/restrict_many/',
+            url=f'{BASE_API_URL}/api/v1/restrict_action/restrict_many/',
             headers=self.__get_app_headers(),
             data=f'signed_body=SIGNATURE.{params}',
         )
@@ -666,7 +667,7 @@ class ThreadsAPI:
             )
 
         response = self.http_client.post(
-            url=f'{BASE_API_URL}/restrict_action/unrestrict/',
+            url=f'{BASE_API_URL}/api/v1/restrict_action/unrestrict/',
             headers=self.__get_app_headers(),
             data=f'signed_body=SIGNATURE.{params}',
         )
@@ -696,7 +697,7 @@ class ThreadsAPI:
             )
 
         response = self.http_client.post(
-            url=f'{BASE_API_URL}/friendships/mute_posts_or_story_from_follow/',
+            url=f'{BASE_API_URL}/api/v1/friendships/mute_posts_or_story_from_follow/',
             headers=self.__get_app_headers(),
             data=f'signed_body=SIGNATURE.{params}',
         )
@@ -726,7 +727,7 @@ class ThreadsAPI:
             )
 
         response = self.http_client.post(
-            url=f'{BASE_API_URL}/friendships/unmute_posts_or_story_from_follow/',
+            url=f'{BASE_API_URL}/api/v1/friendships/unmute_posts_or_story_from_follow/',
             headers=self.__get_app_headers(),
             data=f'signed_body=SIGNATURE.{params}',
         )
