@@ -599,6 +599,66 @@ class ThreadsAPI:
             print("[UNBLOCK]", response.json())
         return response.json()["status"] == "ok"
 
+    def mute(self, user_id: str) -> bool:
+        """
+        Mutes a user.
+
+        Args:
+            user_id (str): user identifier
+
+        Returns:
+            boolean and if verbose mode is enabled, prints response dict
+        """
+        params = quote(
+            string=json.dumps(
+                obj={
+                "target_posts_author_id": user_id,
+                "container_module": "ig_text_feed_timeline",
+                },
+                ),
+            safe="!~*'()"
+            )
+
+        response = self.http_client.post(
+            url=f'{BASE_API_URL}/friendships/mute_posts_or_story_from_follow/',
+            headers=self.__get_app_headers(),
+            data=f'signed_body=SIGNATURE.{params}',
+        )
+
+        if self.verbose:
+            print("[MUTE]", response.json())
+        return response.json()["status"] == "ok"
+
+    def unmute(self, user_id: str) -> bool:
+        """
+        Unmutes a user.
+
+        Args:
+            user_id (str): user identifier
+
+        Returns:
+            boolean and if verbose mode is enabled, prints response dict
+        """
+        params = quote(
+            string=json.dumps(
+                obj={
+                "target_posts_author_id": user_id,
+                "container_module": "ig_text_feed_timeline",
+                },
+                ),
+            safe="!~*'()"
+            )
+
+        response = self.http_client.post(
+            url=f'{BASE_API_URL}/friendships/unmute_posts_or_story_from_follow/',
+            headers=self.__get_app_headers(),
+            data=f'signed_body=SIGNATURE.{params}',
+        )
+
+        if self.verbose:
+            print("[UNMUTE]", response.json())
+        return response.json()["status"] == "ok"
+
     def get_token(self) -> str:
         """
         set fb login token
