@@ -9,7 +9,7 @@
 ## Installation
 
 ```bash
-pip install threads-py
+pip install --no-cache-dir --upgrade threads-py
 ```
 
 <details>
