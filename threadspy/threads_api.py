@@ -82,12 +82,12 @@ class ThreadsAPI:
             self.encrypted_password, self.timestamp_string = self._password_encryption(
                 password
             )
+            self.user_id = self.get_user_id_from_username(username)
 
         if token is not None and isinstance(token, str):
             self.token = token
         else:
             self.token = self.get_token()
-            self.user_id = self.get_user_id_from_username(username)
 
     def __is_valid_url(self, url: str) -> bool:
         url_pattern = re.compile(r"https?://(?:[-\w.]|(?:%[\da-fA-F]{2}))+")
