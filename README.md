@@ -97,6 +97,14 @@ api.publish({
 })
 ```
 
+#### 🔎 Search Users
+
+```python
+search_parameter = "DrunkLeen"
+# 💡 Uses current credentials
+api.search(search_parameter)
+```
+
 #### ✨ Like/Unlike a Thread (from v0.0.7)
 
 ```python
@@ -108,14 +116,44 @@ api.like(postIDToLike)
 api.unlike(postIDToLike)
 ```
 
-#### ✨ Follow/Unfollow a User (from v0.0.7)
+#### ✨ Follow/Unfollow a User
 
 ```python
-user_id_to_follow = api.get_user_id_from_username('junhoyeo')
+user_id = api.get_user_id_from_username('junhoyeo')
 
 # 💡 Uses current credentials
-api.follow(user_id_to_follow)
-api.unfollow(user_id_to_follow)
+api.follow(user_id)
+api.unfollow(user_id)
+```
+
+#### ⛔ Block/Unblock a User
+
+```python
+user_id = api.get_user_id_from_username('junhoyeo')
+
+# 💡 Uses current credentials
+api.block(user_id)
+api.unblock(user_id)
+```
+
+#### 🔇 Mute/Unmute a User
+
+```python
+user_id = api.get_user_id_from_username('junhoyeo')
+
+# 💡 Uses current credentials
+api.mute(user_id)
+api.unmute(user_id)
+```
+
+#### ⏹️ Restrict/Unrestrict a User
+
+```python
+user_id = api.get_user_id_from_username('junhoyeo')
+
+# 💡 Uses current credentials
+api.restrict(user_id)
+api.unrestrict(user_id)
 ```
 
 ## [<img src="./.github/emojis/pushpin.png" width="30" height="30" />](https://github.com/junhoyeo) Roadmap
