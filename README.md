@@ -57,11 +57,10 @@ print(thread)
 linkers = api.get_thread_likers(post_id)
 print(linkers)
 ```
+
 </details>
 
 ### 🚀 Usage (Write)
-
-### New API (from v0.0.6)
 
 #### ✨ Text Threads
 
