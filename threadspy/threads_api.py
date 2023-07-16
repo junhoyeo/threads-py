@@ -526,6 +526,22 @@ class ThreadsAPI:
             print("[UNLIKE]", response.json())
         return response.json()["status"] == "ok"
 
+    def search(self, search_parameter: str) -> dict:
+        """
+        Search for user.
+
+        Args:
+            search_parameter (str): parameter to search
+
+        Returns:
+            dict:{A list of users}.
+        """
+        response = self.http_client.get(
+            url=f'{BASE_API_URL}/users/search/?q={search_parameter}',
+            headers=self.__get_app_headers(),
+            )
+        return response if response.status_code is not 200 else response.json()
+
     def follow(self, user_id: str) -> bool:
         res = self.__toggle_auth__post_request(f"{BASE_API_URL}/friendships/create/{user_id}/")
         if self.verbose:
