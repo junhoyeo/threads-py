@@ -506,9 +506,10 @@ class ThreadsAPI:
         response = self.__toggle_auth__post_request(
             url=f"{BASE_API_URL}/api/v1/media/{post_id}_{user_id}/like/",
         )
+        data = response.json()
         if self.verbose:
-            print("[LIKE]", response.json())
-        return response.json()["status"] == "ok"
+            print("[LIKE]", data)
+        return data["status"] == "ok"
 
     def unlike(self, post_id: str) -> bool:
         """
