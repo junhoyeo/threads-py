@@ -105,7 +105,7 @@ search_parameter = "DrunkLeen"
 api.search(search_parameter)
 ```
 
-#### ✨ Like/Unlike a Thread (from v0.0.7)
+#### 👍 Like/Unlike a Thread (from v0.0.7)
 
 ```python
 post_url = 'https://www.threads.net/t/CugF-EjhQ3r'
@@ -116,7 +116,7 @@ api.like(postIDToLike)
 api.unlike(postIDToLike)
 ```
 
-#### ✨ Follow/Unfollow a User
+#### 👉 Follow/Unfollow a User
 
 ```python
 user_id = api.get_user_id_from_username('junhoyeo')
@@ -156,6 +156,16 @@ api.restrict(user_id)
 api.unrestrict(user_id)
 ```
 
+#### 🧑‍🦳 Check FriendshipStatus with a User
+
+```python
+user_id = api.get_user_id_from_username('junhoyeo')
+
+# 💡 Uses current credentials
+api.friendship_status(user_id)
+```
+
+
 ## [<img src="./.github/emojis/pushpin.png" width="30" height="30" />](https://github.com/junhoyeo) Roadmap
 
 - [x] ✅ Read public data
@@ -175,17 +185,24 @@ api.unrestrict(user_id)
   - [ ] 🚧 Threads Tool for LangChain
   - [ ] 📌 Link Threads & LLaMa ([@Mineru98](https://github.com/Mineru98))
   - [ ] 📌 Provide statistical analysis of posts in Threads ([@Mineru98](https://github.com/Mineru98))
-- [x] ✅ Write data (i.e. write automated Threads)
-  - [x] ✅ Create new Thread with text
-    - [x] ✅ Make link previews to get shown
-  - [x] ✅ Create new Thread with media
+- [ ] 🚧 Write data (i.e. write automated Threads)
+  - [ ] 🚧 Create new Thread with text
+    - [ ] 🚧 Make link previews to get shown
+  - [ ] 🚧 Create new Thread with media
   - [ ] 🚧 Create new Thread with multiple images
-  - [x] ✅ Reply to existing Thread
+  - [ ] 🚧 Reply to existing Thread
   - [ ] 🚧 Quote Thread
   - [ ] 🚧 Delete Thread
 - [x] ✅ Friendships
   - [x] ✅ Follow User
   - [x] ✅ Unfollow User
+  - [x] ✅ Block User
+  - [x] ✅ Unblock User
+  - [x] ✅ Mute User
+  - [x] ✅ Unmute User
+  - [x] ✅ Restrict User
+  - [x] ✅ Unrestrict User
+  - [x] ✅ Check FriendshipStatus with a User
 - [x] ✅ Interactions
   - [x] ✅ Like Thread
   - [x] ✅ Unlike Thread
