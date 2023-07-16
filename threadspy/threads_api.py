@@ -53,7 +53,7 @@ class ThreadsAPI:
 
     def __init__(
         self,
-        verbose: str | None = None,
+        verbose: True | False = None,
         noUpdateLSD: str | None = None,
         fbLSDToken: str | None = None,
         username: str | None = None,
@@ -67,7 +67,7 @@ class ThreadsAPI:
             self.device_id = device_id
         if noUpdateLSD is not None and isinstance(noUpdateLSD, str):
             self.noUpdateLSD = noUpdateLSD
-        if verbose is not None and isinstance(verbose, str):
+        if verbose is not None and isinstance(verbose, bool):
             self.verbose = verbose
 
         if (
@@ -82,6 +82,7 @@ class ThreadsAPI:
             self.encrypted_password, self.timestamp_string = self._password_encryption(
                 password
             )
+            self.user_id = self.get_user_id_from_username(username)
 
         if token is not None and isinstance(token, str):
             self.token = token
@@ -487,23 +488,63 @@ class ThreadsAPI:
             token = self.token
         if token is None:
             raise "Token not found"
-        headers = self.__get_default_headers()
-        res = self.http_client.post(url, headers=headers)
-        return res
+        headers = self.__get_app_headers()
+        response = self.http_client.post(url, headers=headers)
+        return response
 
     def like(self, post_id: str) -> bool:
-        user_id = self.get_current_user_id()
-        res = self.__toggle_auth__post_request(
-            f"{BASE_API_URL}/api/v1/media/{post_id}_${user_id}/like/"
+        """
+        like a post.
+
+        Args:
+            post_id (str): post identifier
+
+        Returns:
+            boolean and if verbose mode is enabled, prints response dict
+        """
+        user_id = self.user_id or self.get_current_user_id()
+        response = self.__toggle_auth__post_request(
+            url=f"{BASE_API_URL}/api/v1/media/{post_id}_{user_id}/like/",
         )
-        return res.json()["status"] == "ok"
+        data = response.json()
+        if self.verbose:
+            print("[LIKE]", data)
+        return data["status"] == "ok"
 
     def unlike(self, post_id: str) -> bool:
-        user_id = self.get_current_user_id()
-        res = self.__toggle_auth__post_request(
-            f"{BASE_API_URL}/api/v1/media/{post_id}_${user_id}/unlike/"
+        """
+        takes your like back from a post.
+
+        Args:
+            post_id (str): post identifier
+
+        Returns:
+            boolean and if verbose mode is enabled, prints response dict
+        """
+        user_id = self.user_id or self.get_current_user_id()
+        response = self.__toggle_auth__post_request(
+            f"{BASE_API_URL}/api/v1/media/{post_id}_{user_id}/unlike/",
         )
-        return res.json()["status"] == "ok"
+        if self.verbose:
+            print("[UNLIKE]", response.json())
+        return response.json()["status"] == "ok"
+
+    def search(self, search_parameter: str) -> dict:
+        """
+        Search for user.
+
+        Args:
+            search_parameter (str): parameter to search
+
+        Returns:
+            dict:{A list of users}.
+        """
+        response = self.http_client.get(
+            url=f"{BASE_API_URL}/api/v1/users/search/?q={search_parameter}",
+            headers=self.__get_app_headers(),
+        )
+        print("URL:", f"{BASE_API_URL}/api/v1/users/search/?q={search_parameter}")
+        return response if response.status_code != 200 else response.json()
 
     def follow(self, user_id: str) -> bool:
         res = self.__toggle_auth__post_request(
@@ -511,7 +552,7 @@ class ThreadsAPI:
         )
         if self.verbose:
             print("[FOLLOW]", res.json())
-        return res.json()
+        return res.json()["status"] == "ok"
 
     def unfollow(self, user_id: str) -> bool:
         res = self.__toggle_auth__post_request(
@@ -519,7 +560,207 @@ class ThreadsAPI:
         )
         if self.verbose:
             print("[UNFOLLOW]", res.json())
-        return res.json()
+        return res.json()["status"] == "ok"
+
+    def block(self, user_id: str) -> bool:
+        """
+        Blocks a user.
+
+        Args:
+            user_id (str): user identifier
+
+        Returns:
+            boolean and if verbose mode is enabled, prints response dict
+        """
+        params = quote(
+            string=json.dumps(
+                obj={
+                    "user_id": user_id,
+                    "surface": "ig_text_feed_timeline",
+                    "is_auto_block_enabled": "true",
+                },
+            ),
+            safe="!~*'()",
+        )
+
+        response = self.http_client.post(
+            url=f"{BASE_API_URL}/api/v1/friendships/block/{user_id}/",
+            headers=self.__get_app_headers(),
+            data=f"signed_body=SIGNATURE.{params}",
+        )
+
+        if self.verbose:
+            print("[BLOCK]", response.json())
+        return response.json()["status"] == "ok"
+
+    def unblock(self, user_id: str) -> bool:
+        """
+        Unblocks a user.
+
+        Args:
+            user_id (str): user identifier
+
+        Returns:
+            boolean and if verbose mode is enabled, prints response dict
+        """
+        params = quote(
+            string=json.dumps(
+                obj={
+                    "user_id": user_id,
+                    "surface": "ig_text_feed_timeline",
+                },
+            ),
+            safe="!~*'()",
+        )
+
+        response = self.http_client.post(
+            url=f"{BASE_API_URL}/api/v1/friendships/unblock/{user_id}/",
+            headers=self.__get_app_headers(),
+            data=f"signed_body=SIGNATURE.{params}",
+        )
+
+        if self.verbose:
+            print("[UNBLOCK]", response.json())
+        return response.json()["status"] == "ok"
+
+    def restrict(self, user_id: str) -> bool:
+        """
+        Restrict a user.
+
+        Args:
+            user_id (str): user identifier
+
+        Returns:
+            boolean and if verbose mode is enabled, prints response dict
+        """
+        params = quote(
+            string=json.dumps(
+                obj={
+                    "user_ids": user_id,
+                    "container_module": "ig_text_feed_timeline",
+                },
+            ),
+            safe="!~*'()",
+        )
+
+        response = self.http_client.post(
+            url=f"{BASE_API_URL}/api/v1/restrict_action/restrict_many/",
+            headers=self.__get_app_headers(),
+            data=f"signed_body=SIGNATURE.{params}",
+        )
+
+        if self.verbose:
+            print("[RESTRICT]", response.json())
+        return response.json()["status"] == "ok"
+
+    def unrestrict(self, user_id: str) -> bool:
+        """
+        Unrestrict a user.
+
+        Args:
+            user_id (str): user identifier
+
+        Returns:
+            boolean and if verbose mode is enabled, prints response dict
+        """
+        params = quote(
+            string=json.dumps(
+                obj={
+                    "target_user_id": user_id,
+                    "container_module": "ig_text_feed_timeline",
+                },
+            ),
+            safe="!~*'()",
+        )
+
+        response = self.http_client.post(
+            url=f"{BASE_API_URL}/api/v1/restrict_action/unrestrict/",
+            headers=self.__get_app_headers(),
+            data=f"signed_body=SIGNATURE.{params}",
+        )
+
+        if self.verbose:
+            print("[UNRESTRICT]", response.json())
+        return response.json()["status"] == "ok"
+
+    def mute(self, user_id: str) -> bool:
+        """
+        Mutes a user.
+
+        Args:
+            user_id (str): user identifier
+
+        Returns:
+            boolean and if verbose mode is enabled, prints response dict
+        """
+        params = quote(
+            string=json.dumps(
+                obj={
+                    "target_posts_author_id": user_id,
+                    "container_module": "ig_text_feed_timeline",
+                },
+            ),
+            safe="!~*'()",
+        )
+
+        response = self.http_client.post(
+            url=f"{BASE_API_URL}/api/v1/friendships/mute_posts_or_story_from_follow/",
+            headers=self.__get_app_headers(),
+            data=f"signed_body=SIGNATURE.{params}",
+        )
+
+        if self.verbose:
+            print("[MUTE]", response.json())
+        return response.json()["status"] == "ok"
+
+    def unmute(self, user_id: str) -> bool:
+        """
+        Unmutes a user.
+
+        Args:
+            user_id (str): user identifier
+
+        Returns:
+            boolean and if verbose mode is enabled, prints response dict
+        """
+        params = quote(
+            string=json.dumps(
+                obj={
+                    "target_posts_author_id": user_id,
+                    "container_module": "ig_text_feed_timeline",
+                },
+            ),
+            safe="!~*'()",
+        )
+
+        response = self.http_client.post(
+            url=f"{BASE_API_URL}/api/v1/friendships/unmute_posts_or_story_from_follow/",
+            headers=self.__get_app_headers(),
+            data=f"signed_body=SIGNATURE.{params}",
+        )
+
+        if self.verbose:
+            print("[UNMUTE]", response.json())
+        return response.json()["status"] == "ok"
+
+    def friendship_status(self, user_id: str) -> dict | int:
+        """
+        Checks Friendship_status with other users.
+
+        Arguments:
+            user_id (str): target user identifier
+
+        Returns:
+            dict(friendship_status) or int(response.status_code)
+        """
+        response = self.http_client.get(
+            url=f"{BASE_API_URL}/api/v1/friendships/show/{user_id}/",
+            headers=self.__get_app_headers(),
+        )
+        if response.status_code == 200:
+            return response.json()
+        else:
+            return response.status_code
 
     def get_token(self) -> str:
         """

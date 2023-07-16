@@ -97,7 +97,15 @@ api.publish({
 })
 ```
 
-#### ✨ Like/Unlike a Thread (from v0.0.8)
+#### 🔎 Search Users
+
+```python
+search_parameter = "DrunkLeen"
+# 💡 Uses current credentials
+api.search(search_parameter)
+```
+
+#### 👍 Like/Unlike a Thread
 
 ```python
 post_url = 'https://www.threads.net/t/CugF-EjhQ3r'
@@ -108,15 +116,55 @@ api.like(postIDToLike)
 api.unlike(postIDToLike)
 ```
 
-#### ✨ Follow/Unfollow a User (from v0.0.8)
+#### 👉 Follow/Unfollow a User
 
 ```python
-user_id_to_follow = api.get_user_id_from_username('junhoyeo')
+user_id = api.get_user_id_from_username('junhoyeo')
 
 # 💡 Uses current credentials
-api.follow(user_id_to_follow)
-api.unfollow(user_id_to_follow)
+api.follow(user_id)
+api.unfollow(user_id)
 ```
+
+#### ⛔ Block/Unblock a User
+
+```python
+user_id = api.get_user_id_from_username('junhoyeo')
+
+# 💡 Uses current credentials
+api.block(user_id)
+api.unblock(user_id)
+```
+
+#### 🔇 Mute/Unmute a User
+
+```python
+user_id = api.get_user_id_from_username('junhoyeo')
+
+# 💡 Uses current credentials
+api.mute(user_id)
+api.unmute(user_id)
+```
+
+#### ⏹️ Restrict/Unrestrict a User
+
+```python
+user_id = api.get_user_id_from_username('junhoyeo')
+
+# 💡 Uses current credentials
+api.restrict(user_id)
+api.unrestrict(user_id)
+```
+
+#### 🧑‍🦳 Check FriendshipStatus with a User
+
+```python
+user_id = api.get_user_id_from_username('junhoyeo')
+
+# 💡 Uses current credentials
+api.friendship_status(user_id)
+```
+
 
 ## [<img src="./.github/emojis/pushpin.png" width="30" height="30" />](https://github.com/junhoyeo) Roadmap
 
@@ -137,17 +185,24 @@ api.unfollow(user_id_to_follow)
   - [ ] 🚧 Threads Tool for LangChain
   - [ ] 📌 Link Threads & LLaMa ([@Mineru98](https://github.com/Mineru98))
   - [ ] 📌 Provide statistical analysis of posts in Threads ([@Mineru98](https://github.com/Mineru98))
-- [x] ✅ Write data (i.e. write automated Threads)
-  - [x] ✅ Create new Thread with text
-    - [x] ✅ Make link previews to get shown
-  - [x] ✅ Create new Thread with media
+- [ ] 🚧 Write data (i.e. write automated Threads)
+  - [ ] 🚧 Create new Thread with text
+    - [ ] 🚧 Make link previews to get shown
+  - [ ] 🚧 Create new Thread with media
   - [ ] 🚧 Create new Thread with multiple images
-  - [x] ✅ Reply to existing Thread
+  - [ ] 🚧 Reply to existing Thread
   - [ ] 🚧 Quote Thread
   - [ ] 🚧 Delete Thread
 - [x] ✅ Friendships
   - [x] ✅ Follow User
   - [x] ✅ Unfollow User
+  - [x] ✅ Block User
+  - [x] ✅ Unblock User
+  - [x] ✅ Mute User
+  - [x] ✅ Unmute User
+  - [x] ✅ Restrict User
+  - [x] ✅ Unrestrict User
+  - [x] ✅ Check FriendshipStatus with a User
 - [x] ✅ Interactions
   - [x] ✅ Like Thread
   - [x] ✅ Unlike Thread
