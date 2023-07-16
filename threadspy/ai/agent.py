@@ -1,6 +1,5 @@
 import os
 import sys
-import json
 import itertools
 from datetime import datetime
 from langchain import PromptTemplate, LLMChain
@@ -8,7 +7,7 @@ from langchain.llms import LlamaCpp, OpenAIChat
 from langchain.callbacks.manager import CallbackManager
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 
-from ._thread import ThreadsAPI
+from ..threads_api import ThreadsAPI
 from .templates import QA_template
 
 
@@ -69,7 +68,9 @@ class ThreadsAgent:
         else:
             raise "Choose a mode between 'llama' and 'openai'"
 
-    def analysis_profile(self, username: str, boundary: str = "all", onlyText=False, sort="DESC"):
+    def analysis_profile(
+        self, username: str, boundary: str = "all", onlyText=False, sort="DESC"
+    ):
         self.threads_api.username = username
         user_id = self.threads_api.get_user_id_from_username(username=username)
         if user_id is None:
@@ -86,7 +87,9 @@ class ThreadsAgent:
                     username=username, user_id=self.threads_api.user_id
                 )
                 threads.extend(threads_tab)
-            threads = [[item["post"] for item in x.to_dict()["thread_items"]] for x in threads]
+            threads = [
+                [item["post"] for item in x.to_dict()["thread_items"]] for x in threads
+            ]
             threads = list(itertools.chain(*threads))
             if sort == "DESC":
                 threads.sort(key=lambda x: (x["taken_at"],))

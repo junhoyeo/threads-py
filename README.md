@@ -4,6 +4,8 @@
 
 > Unofficial, Reverse-Engineered Python client for Meta's Threads.
 
+**Looking for the TypeScript version?** _Check out **[junhoyeo/threads-api. ![](https://img.shields.io/github/stars/junhoyeo%2Fthreads-api?style=social)](https://github.com/junhoyeo/threads-api)**_
+
 ## Installation
 
 ```bash
@@ -60,8 +62,6 @@ print(linkers)
 </details>
 
 ### 🚀 Usage (Write)
-
-### New API (from v0.0.6)
 
 #### ✨ Text Threads
 
@@ -122,31 +122,35 @@ api.unfollow(user_id_to_follow)
 
 - [x] ✅ Read public data
   - [x] ✅ Fetch UserID(`314216`) via username(`zuck`)
+  - [ ] 🚧 Read timeline feed
   - [x] ✅ Read User Profile Info
   - [x] ✅ Read list of User Threads
-  - [x] ✅ Read list of User Repiles
-  - [x] ✅ Fetch PostID(`3140957200974444958`) via PostURL(`https://www.threads.net/t/CuW6-7KyXme`)
+    - [ ] 🚧 With Pagination (If auth provided)
+  - [x] ✅ Read list of User Replies
+    - [ ] 🚧 With Pagination (If auth provided)
+  - [x] ✅ Fetch PostID(`3140957200974444958`) via ThreadID(`CuW6-7KyXme`) or PostURL(`https://www.threads.net/t/CuW6-7KyXme`)
   - [x] ✅ Read Threads via PostID
   - [x] ✅ Read Likers in Thread via PostID
-- [ ] 🚧 LangChain Agent
-  - [ ] 🚧 Link Threads & LLaMa
-  - [ ] 🚧 Provide statistical analysis of posts in Threads
-- [ ] 🚧 Read private data
+  - [ ] 🚧 Read User Followers
+  - [ ] 🚧 Read User Followings
+- [ ] 🚧 LangChain Agent (`threadspy.ai`)
+  - [ ] 🚧 Threads Tool for LangChain
+  - [ ] 📌 Link Threads & LLaMa ([@Mineru98](https://github.com/Mineru98))
+  - [ ] 📌 Provide statistical analysis of posts in Threads ([@Mineru98](https://github.com/Mineru98))
 - [x] ✅ Write data (i.e. write automated Threads)
   - [x] ✅ Create new Thread with text
-    - [ ] 🚧 Make link previews to get shown
+    - [x] ✅ Make link previews to get shown
   - [x] ✅ Create new Thread with media
-  - [ ] 🚧 Create new Thread with a multiple images
+  - [ ] 🚧 Create new Thread with multiple images
   - [x] ✅ Reply to existing Thread
+  - [ ] 🚧 Quote Thread
+  - [ ] 🚧 Delete Thread
 - [x] ✅ Friendships
   - [x] ✅ Follow User
   - [x] ✅ Unfollow User
 - [x] ✅ Interactions
   - [x] ✅ Like Thread
-  - [x] ✅ Unike Thread
-- [x] 🏴‍☠️ Restructure project as an monorepo
-  - [ ] 🏴‍☠️ Cool CLI App to run Threads in the Terminal
-
+  - [x] ✅ Unlike Thread
 
 ## License
 

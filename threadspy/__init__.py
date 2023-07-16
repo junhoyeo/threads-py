@@ -1,6 +1,5 @@
-from threadspy._thread import ThreadsAPI
-from threadspy._agent import ThreadsAgent
+from threadspy.threads_api import ThreadsAPI
 
-__ALL__ = [ThreadsAPI, ThreadsAgent]
-__version__ = "0.0.6"
+__all__ = ["ThreadsAPI"]
+__version__ = "0.0.7"
 __author__ = "junhoyeo"

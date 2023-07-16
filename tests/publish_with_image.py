@@ -4,7 +4,9 @@ from threadspy import ThreadsAPI
 
 class TestPublishWithImage(unittest.TestCase):
     def setUp(self):
-        self.threads_api = ThreadsAPI(verbose=True, username="username", password="password")
+        self.threads_api = ThreadsAPI(
+            verbose=True, username="username", password="password"
+        )
 
     def test_publish_with_local_image(self):
         check_sum = self.threads_api.publish_with_image(
