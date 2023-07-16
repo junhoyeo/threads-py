@@ -1,5 +1,7 @@
 {
   "editor.formatOnSave": true,
+  "files.insertFinalNewline": true,
+  "python.defaultInterpreterPath": ".venv/bin/python",
   "python.formatting.provider": "black",
   "python.linting.pylintEnabled": true,
   "python.linting.enabled": true,
