@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "threads-py"
+version = "1.0.0"
+description = "Unofficial, Reverse-Engineered Python client for Meta's Threads."
+license = "MIT"
+authors = ["Junho Yeo <i@junho.io>"]
+repository = "https://github.com/junhoyeo/threads-py"
+readme = ["README.md", "LICENSE"]
+keywords = ["threads", "instagram", "facebook", "meta", "api"]
+
+[tool.poetry.dependencies]
+python = ">=3.8.1,<4.0"
+requests = "^2.31.0"
+dataclasses = "^0.6"
+dataclasses-json = "^0.5.9"
+
+[tool.poetry.group.ai]
+optional = true
+[tool.poetry.group.ai.dependencies]
+langchain = "^0.0.227"

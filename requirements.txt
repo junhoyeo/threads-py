@@ -1,6 +1,0 @@
-requests==2.31.0
-dataclasses==0.6
-dataclasses-json==0.5.9
-langchain==0.0.227
-llama-cpp-python==0.1.68
-scikit-llm==0.0.3
