@@ -1,6 +1,5 @@
 import os
 import sys
-import json
 import itertools
 from datetime import datetime
 from langchain import PromptTemplate, LLMChain
@@ -8,7 +7,7 @@ from langchain.llms import LlamaCpp, OpenAIChat
 from langchain.callbacks.manager import CallbackManager
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 
-from ._thread import ThreadsAPI
+from ..threads_api import ThreadsAPI
 from .templates import QA_template
 
 

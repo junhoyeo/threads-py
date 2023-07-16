@@ -30,7 +30,7 @@ from threadspy.types import (
     GetUserProfileThreadsResponse,
 )
 
-from threadspy._constant import (
+from threadspy.constants import (
     LATEST_ANDROID_APP_VERSION,
     DEFAULT_LSD_TOKEN,
     DEFAULT_DEVICE_ID,
