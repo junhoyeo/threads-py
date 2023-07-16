@@ -64,28 +64,32 @@ class ThreadsAPI:
         device_id: str | None = None,
         token: str | None = None,
     ) -> None:
-
         if fbLSDToken is not None and isinstance(fbLSDToken, str):
             self.fbLSDToken = fbLSDToken
         if device_id is not None and isinstance(device_id, str):
             self.device_id = device_id
-        if noUpdateLSD is not None and  isinstance(noUpdateLSD, str):
+        if noUpdateLSD is not None and isinstance(noUpdateLSD, str):
             self.noUpdateLSD = noUpdateLSD
-        if verbose is not None and  isinstance(verbose, str):
+        if verbose is not None and isinstance(verbose, str):
             self.verbose = verbose
 
-        if username is not None and isinstance(username, str) \
-            and password is not None and isinstance(password, str):
+        if (
+            username is not None
+            and isinstance(username, str)
+            and password is not None
+            and isinstance(password, str)
+        ):
             self.username = username
             self.password = password
-            self.public_key,self.public_key_id = self._get_ig_public_key()
-            self.encrypted_password, self.timestamp_string = self._password_encryption(password)
+            self.public_key, self.public_key_id = self._get_ig_public_key()
+            self.encrypted_password, self.timestamp_string = self._password_encryption(
+                password
+            )
 
         if token is not None and isinstance(token, str):
             self.token = token
         else:
             self.token = self.get_token()
-
 
     def __is_valid_url(self, url: str) -> bool:
         url_pattern = re.compile(r"https?://(?:[-\w.]|(?:%[\da-fA-F]{2}))+")
@@ -143,34 +147,38 @@ class ThreadsAPI:
         """
         str_parameters = json.dumps(
             {
-                'id': str(uuid.uuid4()),
+                "id": str(uuid.uuid4()),
             },
         )
         encoded_parameters = quote(string=str_parameters, safe="!~*'()")
 
         response = requests.post(
-            url=f'{BASE_API_URL}/qe/sync/',
+            url=f"{BASE_API_URL}/qe/sync/",
             headers={
-                'User-Agent': f'Barcelona {LATEST_ANDROID_APP_VERSION} Android',
-                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                "User-Agent": f"Barcelona {LATEST_ANDROID_APP_VERSION} Android",
+                "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
             },
-            data=f'params={encoded_parameters}',
+            data=f"params={encoded_parameters}",
         )
-        public_key = response.headers.get('ig-set-password-encryption-pub-key')
-        public_key_id = response.headers.get('ig-set-password-encryption-key-id')
+        public_key = response.headers.get("ig-set-password-encryption-pub-key")
+        public_key_id = response.headers.get("ig-set-password-encryption-key-id")
 
         return public_key, int(public_key_id)
 
     def _password_encryption(self, password: str) -> tuple[str, str]:
-        password_bytes = password.encode('utf-8')
+        password_bytes = password.encode("utf-8")
 
         timestamp = int(time.time())
-        timestamp_string = str(timestamp).encode('utf-8')
+        timestamp_string = str(timestamp).encode("utf-8")
 
         secret_key = get_random_bytes(32)
-        key_id_mixed_bytes = int(1).to_bytes(1, 'big') + self.public_key_id.to_bytes(1, 'big')
+        key_id_mixed_bytes = int(1).to_bytes(1, "big") + self.public_key_id.to_bytes(
+            1, "big"
+        )
         initialization_vector = get_random_bytes(12)
-        encrypted_rsa_key_mixed_bytes = int(0).to_bytes(1, 'big') + int(1).to_bytes(1, 'big')
+        encrypted_rsa_key_mixed_bytes = int(0).to_bytes(1, "big") + int(1).to_bytes(
+            1, "big"
+        )
         public_key_bytes = base64.b64decode(self.public_key)
         public_key = RSA.import_key(extern_key=public_key_bytes)
         cipher = PKCS1_v1_5.new(public_key)
@@ -189,7 +197,7 @@ class ThreadsAPI:
         )
         password_encryption_base64 = base64.b64encode(
             s=password_as_encryption_sequence,
-        ).decode('ascii')
+        ).decode("ascii")
 
         return password_encryption_base64, str(timestamp)
 
@@ -220,7 +228,9 @@ class ThreadsAPI:
                 "x-ig-app-id": None,
             }
         )
-        response = self.http_client.get(f"https://www.instagram.com/{username}", headers=headers)
+        response = self.http_client.get(
+            f"https://www.instagram.com/{username}", headers=headers
+        )
 
         text = response.text.replace("\n", "")
 
@@ -376,7 +386,7 @@ class ThreadsAPI:
         Returns:
             str: a post id
         """
-        alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_'
+        alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_"
         post_id = 0
         for letter in thread_id:
             post_id = (post_id * 64) + alphabet.index(letter)
@@ -486,22 +496,30 @@ class ThreadsAPI:
 
     def like(self, post_id: str) -> bool:
         user_id = self.get_current_user_id()
-        res = self.__toggle_auth__post_request(f"{BASE_API_URL}/media/{post_id}_${user_id}/like/")
+        res = self.__toggle_auth__post_request(
+            f"{BASE_API_URL}/media/{post_id}_${user_id}/like/"
+        )
         return res.json()["status"] == "ok"
 
     def unlike(self, post_id: str) -> bool:
         user_id = self.get_current_user_id()
-        res = self.__toggle_auth__post_request(f"{BASE_API_URL}/media/{post_id}_${user_id}/unlike/")
+        res = self.__toggle_auth__post_request(
+            f"{BASE_API_URL}/media/{post_id}_${user_id}/unlike/"
+        )
         return res.json()["status"] == "ok"
 
     def follow(self, user_id: str) -> bool:
-        res = self.__toggle_auth__post_request(f"{BASE_API_URL}/friendships/create/{user_id}/")
+        res = self.__toggle_auth__post_request(
+            f"{BASE_API_URL}/friendships/create/{user_id}/"
+        )
         if self.verbose:
             print("[FOLLOW]", res.json())
         return res.json()
 
     def unfollow(self, user_id: str) -> bool:
-        res = self.__toggle_auth__post_request(f"{BASE_API_URL}/friendships/destroy/{user_id}/")
+        res = self.__toggle_auth__post_request(
+            f"{BASE_API_URL}/friendships/destroy/{user_id}/"
+        )
         if self.verbose:
             print("[UNFOLLOW]", res.json())
         return res.json()
@@ -514,11 +532,13 @@ class ThreadsAPI:
             str: validate token string None if not valid
         """
         try:
-            blockVersion = "5f56efad68e1edec7801f630b5c122704ec5378adbee6609a448f105f34a9c73"
+            blockVersion = (
+                "5f56efad68e1edec7801f630b5c122704ec5378adbee6609a448f105f34a9c73"
+            )
             params = json.dumps(
                 {
                     "client_input_params": {
-                        "password": f'#PWD_INSTAGRAM:4:{self.timestamp_string}:{self.encrypted_password}',
+                        "password": f"#PWD_INSTAGRAM:4:{self.timestamp_string}:{self.encrypted_password}",
                         "contact_point": self.username,
                         "device_id": self.device_id,
                     },
@@ -535,20 +555,20 @@ class ThreadsAPI:
             bk_client_context_quote = quote(string=bk_client_context, safe="!~*'()")
 
             response = requests.post(
-                url=f'{BASE_API_URL}/bloks/apps/com.bloks.www.bloks.caa.login.async.send_login_request/',
+                url=f"{BASE_API_URL}/bloks/apps/com.bloks.www.bloks.caa.login.async.send_login_request/",
                 headers={
-                    'User-Agent': 'Barcelona 289.0.0.77.109 Android',
-                    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                    "User-Agent": "Barcelona 289.0.0.77.109 Android",
+                    "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
                 },
-                data=f'params={params_quote}&bk_client_context={bk_client_context_quote}&bloks_versioning_id={blockVersion}',
+                data=f"params={params_quote}&bk_client_context={bk_client_context_quote}&bloks_versioning_id={blockVersion}",
             )
 
             data = response.text
             if data == "Oops, an error occurred.":
                 return None
-            pos = data.find('Bearer IGT:2:')
+            pos = data.find("Bearer IGT:2:")
             data_txt = data[pos:]
-            backslash_pos = data_txt.find('\\\\')
+            backslash_pos = data_txt.find("\\\\")
             token = data_txt[13:backslash_pos]
 
             return token
@@ -559,7 +579,11 @@ class ThreadsAPI:
             return None
 
     def publish(
-        self, caption: str, image_path: str = None, url: str = None, parent_post_id: str = None
+        self,
+        caption: str,
+        image_path: str = None,
+        url: str = None,
+        parent_post_id: str = None,
     ) -> bool:
         """
         Returns publish post
@@ -610,7 +634,9 @@ class ThreadsAPI:
                     return False
                 else:
                     image_content = self.__download(image_path)
-            upload_id = self.upload_image(image_url=image_path, image_content=image_content)
+            upload_id = self.upload_image(
+                image_url=image_path, image_content=image_content
+            )
             if upload_id == None:
                 return False
             params["upload_id"] = upload_id["upload_id"]

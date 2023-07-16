@@ -23,7 +23,9 @@ class TestPublish(unittest.TestCase):
     def test_publish_with_reply(self):
         parent_post_url = "https://www.threads.net/t/CugF-EjhQ3r"
         parent_post_id = self.threads_api.get_post_id_from_url(parent_post_url)
-        check_sum = self.threads_api.publish("🤖 Hello World!", parent_post_id=parent_post_id)
+        check_sum = self.threads_api.publish(
+            "🤖 Hello World!", parent_post_id=parent_post_id
+        )
         self.assertEqual(check_sum, True)
 
     def test_publish_with_image_url(self):
@@ -32,7 +34,9 @@ class TestPublish(unittest.TestCase):
         self.assertEqual(check_sum, True)
 
     def test_publish_with_local_image(self):
-        check_sum = self.threads_api.publish("🤖 Hello World!", image_path=".github/logo.jpg")
+        check_sum = self.threads_api.publish(
+            "🤖 Hello World!", image_path=".github/logo.jpg"
+        )
         self.assertEqual(check_sum, True)
 
 

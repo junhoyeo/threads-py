@@ -68,7 +68,9 @@ class ThreadsAgent:
         else:
             raise "Choose a mode between 'llama' and 'openai'"
 
-    def analysis_profile(self, username: str, boundary: str = "all", onlyText=False, sort="DESC"):
+    def analysis_profile(
+        self, username: str, boundary: str = "all", onlyText=False, sort="DESC"
+    ):
         self.threads_api.username = username
         user_id = self.threads_api.get_user_id_from_username(username=username)
         if user_id is None:
@@ -85,7 +87,9 @@ class ThreadsAgent:
                     username=username, user_id=self.threads_api.user_id
                 )
                 threads.extend(threads_tab)
-            threads = [[item["post"] for item in x.to_dict()["thread_items"]] for x in threads]
+            threads = [
+                [item["post"] for item in x.to_dict()["thread_items"]] for x in threads
+            ]
             threads = list(itertools.chain(*threads))
             if sort == "DESC":
                 threads.sort(key=lambda x: (x["taken_at"],))

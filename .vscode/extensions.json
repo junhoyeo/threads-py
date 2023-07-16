@@ -1,0 +1,6 @@
+{
+  "recommendations": [
+    "ms-python.pylint",
+    "ms-python.black-formatter"
+  ]
+}

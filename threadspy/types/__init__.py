@@ -18,7 +18,11 @@ from .text_post_app_info import TextPostAppInfo
 from .reply_facepile_user import ReplyFacepileUser
 from .threads_user_summary import ThreadsUserSummary
 from .threads_hd_profile_pic_version import ThreadsHdProfilePicVersion
-from .common import CommonMediaDataResponse, CommonThreadDataResponse, CommonUserProfileDataResponse
+from .common import (
+    CommonMediaDataResponse,
+    CommonThreadDataResponse,
+    CommonUserProfileDataResponse,
+)
 
 from .get_user_profile_response import GetUserProfileResponse
 from .get_thread_likers_response import GetThreadLikersResponse
@@ -47,7 +51,9 @@ __all__ = [
     "ReplyFacepileUser",
     "ThreadsUserSummary",
     "ThreadsHdProfilePicVersion",
-    "CommonMediaDataResponse", "CommonThreadDataResponse", "CommonUserProfileDataResponse"
+    "CommonMediaDataResponse",
+    "CommonThreadDataResponse",
+    "CommonUserProfileDataResponse",
     "GetUserProfileResponse",
     "GetThreadLikersResponse",
     "GetUserProfileThreadResponse",

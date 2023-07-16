@@ -9,7 +9,9 @@ class TestGetUserProfileThreads(unittest.TestCase):
 
     def test_get_user_profile_threads(self):
         user_id = self.threads_api.get_user_id_from_username(username=self.username)
-        posts = self.threads_api.get_user_profile_threads(username=self.username, user_id=user_id)
+        posts = self.threads_api.get_user_profile_threads(
+            username=self.username, user_id=user_id
+        )
 
         self.assertIsInstance(posts, list)
         if len(posts) > 0:
