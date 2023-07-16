@@ -35,9 +35,6 @@ from threadspy.constants import (
     DEFAULT_LSD_TOKEN,
     DEFAULT_DEVICE_ID,
     BASE_API_URL,
-    LOGIN_URL,
-    POST_URL,
-    POST_WITH_IMAGE_URL,
 )
 
 
@@ -153,7 +150,7 @@ class ThreadsAPI:
         encoded_parameters = quote(string=str_parameters, safe="!~*'()")
 
         response = requests.post(
-            url=f"{BASE_API_URL}/qe/sync/",
+            url=f"{BASE_API_URL}/api/v1/qe/sync/",
             headers={
                 "User-Agent": f"Barcelona {LATEST_ANDROID_APP_VERSION} Android",
                 "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
@@ -497,20 +494,20 @@ class ThreadsAPI:
     def like(self, post_id: str) -> bool:
         user_id = self.get_current_user_id()
         res = self.__toggle_auth__post_request(
-            f"{BASE_API_URL}/media/{post_id}_${user_id}/like/"
+            f"{BASE_API_URL}/api/v1/media/{post_id}_${user_id}/like/"
         )
         return res.json()["status"] == "ok"
 
     def unlike(self, post_id: str) -> bool:
         user_id = self.get_current_user_id()
         res = self.__toggle_auth__post_request(
-            f"{BASE_API_URL}/media/{post_id}_${user_id}/unlike/"
+            f"{BASE_API_URL}/api/v1/media/{post_id}_${user_id}/unlike/"
         )
         return res.json()["status"] == "ok"
 
     def follow(self, user_id: str) -> bool:
         res = self.__toggle_auth__post_request(
-            f"{BASE_API_URL}/friendships/create/{user_id}/"
+            f"{BASE_API_URL}/api/v1/friendships/create/{user_id}/"
         )
         if self.verbose:
             print("[FOLLOW]", res.json())
@@ -518,7 +515,7 @@ class ThreadsAPI:
 
     def unfollow(self, user_id: str) -> bool:
         res = self.__toggle_auth__post_request(
-            f"{BASE_API_URL}/friendships/destroy/{user_id}/"
+            f"{BASE_API_URL}/api/v1/friendships/destroy/{user_id}/"
         )
         if self.verbose:
             print("[UNFOLLOW]", res.json())
@@ -555,7 +552,7 @@ class ThreadsAPI:
             bk_client_context_quote = quote(string=bk_client_context, safe="!~*'()")
 
             response = requests.post(
-                url=f"{BASE_API_URL}/bloks/apps/com.bloks.www.bloks.caa.login.async.send_login_request/",
+                url=f"{BASE_API_URL}/api/v1/bloks/apps/com.bloks.www.bloks.caa.login.async.send_login_request/",
                 headers={
                     "User-Agent": "Barcelona 289.0.0.77.109 Android",
                     "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
@@ -625,9 +622,10 @@ class ThreadsAPI:
                 "android_release": "7.1.1",
             },
         }
-        post_url = POST_URL
+        post_url = f"{BASE_API_URL}/api/v1/media/configure_text_only_post/"
         if image_path is not None:
-            post_url = POST_WITH_IMAGE_URL
+            post_url = f"{BASE_API_URL}/api/v1/media/configure_text_post_app_feed/"
+
             image_content = None
             if not (os.path.isfile(image_path) and os.path.exists(image_path)):
                 if not self.__is_valid_url(image_path):
