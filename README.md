@@ -97,7 +97,7 @@ api.publish({
 })
 ```
 
-#### ✨ Like/Unlike a Thread (from v0.0.7)
+#### ✨ Like/Unlike a Thread (from v0.0.8)
 
 ```python
 post_url = 'https://www.threads.net/t/CugF-EjhQ3r'
@@ -108,7 +108,7 @@ api.like(postIDToLike)
 api.unlike(postIDToLike)
 ```
 
-#### ✨ Follow/Unfollow a User (from v0.0.7)
+#### ✨ Follow/Unfollow a User (from v0.0.8)
 
 ```python
 user_id_to_follow = api.get_user_id_from_username('junhoyeo')
