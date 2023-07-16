@@ -105,7 +105,7 @@ search_parameter = "DrunkLeen"
 api.search(search_parameter)
 ```
 
-#### 👍 Like/Unlike a Thread (from v0.0.7)
+#### 👍 Like/Unlike a Thread
 
 ```python
 post_url = 'https://www.threads.net/t/CugF-EjhQ3r'
