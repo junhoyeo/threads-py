@@ -504,7 +504,8 @@ class ThreadsAPI:
         """
         user_id = self.user_id or self.get_current_user_id()
         response = self.__toggle_auth__post_request(
-            url=f'{BASE_API_URL}/api/v1/media/{post_id}_{user_id}/like/',)
+            url=f"{BASE_API_URL}/api/v1/media/{post_id}_{user_id}/like/",
+        )
         if self.verbose:
             print("[LIKE]", response.json())
         return response.json()["status"] == "ok"
@@ -521,7 +522,8 @@ class ThreadsAPI:
         """
         user_id = self.user_id or self.get_current_user_id()
         response = self.__toggle_auth__post_request(
-            f"{BASE_API_URL}/api/v1/media/{post_id}_{user_id}/unlike/",)
+            f"{BASE_API_URL}/api/v1/media/{post_id}_{user_id}/unlike/",
+        )
         if self.verbose:
             print("[UNLIKE]", response.json())
         return response.json()["status"] == "ok"
@@ -537,20 +539,24 @@ class ThreadsAPI:
             dict:{A list of users}.
         """
         response = self.http_client.get(
-            url=f'{BASE_API_URL}/api/v1/users/search/?q={search_parameter}',
+            url=f"{BASE_API_URL}/api/v1/users/search/?q={search_parameter}",
             headers=self.__get_app_headers(),
-            )
-        print("URL:", f'{BASE_API_URL}/api/v1/users/search/?q={search_parameter}')
+        )
+        print("URL:", f"{BASE_API_URL}/api/v1/users/search/?q={search_parameter}")
         return response if response.status_code != 200 else response.json()
 
     def follow(self, user_id: str) -> bool:
-        res = self.__toggle_auth__post_request(f"{BASE_API_URL}/api/v1/friendships/create/{user_id}/")
+        res = self.__toggle_auth__post_request(
+            f"{BASE_API_URL}/api/v1/friendships/create/{user_id}/"
+        )
         if self.verbose:
             print("[FOLLOW]", res.json())
         return res.json()["status"] == "ok"
 
     def unfollow(self, user_id: str) -> bool:
-        res = self.__toggle_auth__post_request(f"{BASE_API_URL}/api/v1/friendships/destroy/{user_id}/")
+        res = self.__toggle_auth__post_request(
+            f"{BASE_API_URL}/api/v1/friendships/destroy/{user_id}/"
+        )
         if self.verbose:
             print("[UNFOLLOW]", res.json())
         return res.json()["status"] == "ok"
@@ -568,18 +574,18 @@ class ThreadsAPI:
         params = quote(
             string=json.dumps(
                 obj={
-                "user_id": user_id,
-                "surface": "ig_text_feed_timeline",
-                "is_auto_block_enabled": "true",
+                    "user_id": user_id,
+                    "surface": "ig_text_feed_timeline",
+                    "is_auto_block_enabled": "true",
                 },
-                ),
-            safe="!~*'()"
-            )
+            ),
+            safe="!~*'()",
+        )
 
         response = self.http_client.post(
-            url=f'{BASE_API_URL}/api/v1/friendships/block/{user_id}/',
+            url=f"{BASE_API_URL}/api/v1/friendships/block/{user_id}/",
             headers=self.__get_app_headers(),
-            data=f'signed_body=SIGNATURE.{params}',
+            data=f"signed_body=SIGNATURE.{params}",
         )
 
         if self.verbose:
@@ -599,17 +605,17 @@ class ThreadsAPI:
         params = quote(
             string=json.dumps(
                 obj={
-                "user_id": user_id,
-                "surface": "ig_text_feed_timeline",
+                    "user_id": user_id,
+                    "surface": "ig_text_feed_timeline",
                 },
-                ),
-            safe="!~*'()"
-            )
+            ),
+            safe="!~*'()",
+        )
 
         response = self.http_client.post(
-            url=f'{BASE_API_URL}/api/v1/friendships/unblock/{user_id}/',
+            url=f"{BASE_API_URL}/api/v1/friendships/unblock/{user_id}/",
             headers=self.__get_app_headers(),
-            data=f'signed_body=SIGNATURE.{params}',
+            data=f"signed_body=SIGNATURE.{params}",
         )
 
         if self.verbose:
@@ -629,17 +635,17 @@ class ThreadsAPI:
         params = quote(
             string=json.dumps(
                 obj={
-                "user_ids": user_id,
-                "container_module": "ig_text_feed_timeline",
+                    "user_ids": user_id,
+                    "container_module": "ig_text_feed_timeline",
                 },
-                ),
-            safe="!~*'()"
-            )
+            ),
+            safe="!~*'()",
+        )
 
         response = self.http_client.post(
-            url=f'{BASE_API_URL}/api/v1/restrict_action/restrict_many/',
+            url=f"{BASE_API_URL}/api/v1/restrict_action/restrict_many/",
             headers=self.__get_app_headers(),
-            data=f'signed_body=SIGNATURE.{params}',
+            data=f"signed_body=SIGNATURE.{params}",
         )
 
         if self.verbose:
@@ -659,17 +665,17 @@ class ThreadsAPI:
         params = quote(
             string=json.dumps(
                 obj={
-                "target_user_id": user_id,
-                "container_module": "ig_text_feed_timeline",
+                    "target_user_id": user_id,
+                    "container_module": "ig_text_feed_timeline",
                 },
-                ),
-            safe="!~*'()"
-            )
+            ),
+            safe="!~*'()",
+        )
 
         response = self.http_client.post(
-            url=f'{BASE_API_URL}/api/v1/restrict_action/unrestrict/',
+            url=f"{BASE_API_URL}/api/v1/restrict_action/unrestrict/",
             headers=self.__get_app_headers(),
-            data=f'signed_body=SIGNATURE.{params}',
+            data=f"signed_body=SIGNATURE.{params}",
         )
 
         if self.verbose:
@@ -689,17 +695,17 @@ class ThreadsAPI:
         params = quote(
             string=json.dumps(
                 obj={
-                "target_posts_author_id": user_id,
-                "container_module": "ig_text_feed_timeline",
+                    "target_posts_author_id": user_id,
+                    "container_module": "ig_text_feed_timeline",
                 },
-                ),
-            safe="!~*'()"
-            )
+            ),
+            safe="!~*'()",
+        )
 
         response = self.http_client.post(
-            url=f'{BASE_API_URL}/api/v1/friendships/mute_posts_or_story_from_follow/',
+            url=f"{BASE_API_URL}/api/v1/friendships/mute_posts_or_story_from_follow/",
             headers=self.__get_app_headers(),
-            data=f'signed_body=SIGNATURE.{params}',
+            data=f"signed_body=SIGNATURE.{params}",
         )
 
         if self.verbose:
@@ -719,22 +725,41 @@ class ThreadsAPI:
         params = quote(
             string=json.dumps(
                 obj={
-                "target_posts_author_id": user_id,
-                "container_module": "ig_text_feed_timeline",
+                    "target_posts_author_id": user_id,
+                    "container_module": "ig_text_feed_timeline",
                 },
-                ),
-            safe="!~*'()"
-            )
+            ),
+            safe="!~*'()",
+        )
 
         response = self.http_client.post(
-            url=f'{BASE_API_URL}/api/v1/friendships/unmute_posts_or_story_from_follow/',
+            url=f"{BASE_API_URL}/api/v1/friendships/unmute_posts_or_story_from_follow/",
             headers=self.__get_app_headers(),
-            data=f'signed_body=SIGNATURE.{params}',
+            data=f"signed_body=SIGNATURE.{params}",
         )
 
         if self.verbose:
             print("[UNMUTE]", response.json())
         return response.json()["status"] == "ok"
+
+    def friendship_status(self, user_id: str) -> dict | int:
+        """
+        Checks Friendship_status with other users.
+
+        Arguments:
+            user_id (str): target user identifier
+
+        Returns:
+            dict(friendship_status) or int(response.status_code)
+        """
+        response = self.http_client.get(
+            url=f"{BASE_API_URL}/api/v1/friendships/show/{user_id}/",
+            headers=self.__get_app_headers(),
+        )
+        if response.status_code == 200:
+            return response.json()
+        else:
+            return response.status_code
 
     def get_token(self) -> str:
         """
