@@ -527,20 +527,16 @@ class ThreadsAPI:
         return response.json()["status"] == "ok"
 
     def follow(self, user_id: str) -> bool:
-        res = self.__toggle_auth__post_request(
-            f"{BASE_API_URL}/api/v1/friendships/create/{user_id}/"
-        )
+        res = self.__toggle_auth__post_request(f"{BASE_API_URL}/friendships/create/{user_id}/")
         if self.verbose:
             print("[FOLLOW]", res.json())
-        return res.json()
+        return res.json()["status"] == "ok"
 
     def unfollow(self, user_id: str) -> bool:
-        res = self.__toggle_auth__post_request(
-            f"{BASE_API_URL}/api/v1/friendships/destroy/{user_id}/"
-        )
+        res = self.__toggle_auth__post_request(f"{BASE_API_URL}/friendships/destroy/{user_id}/")
         if self.verbose:
             print("[UNFOLLOW]", res.json())
-        return res.json()
+        return res.json()["status"] == "ok"
 
     def get_token(self) -> str:
         """
