@@ -525,8 +525,9 @@ class ThreadsAPI:
         response = self.__toggle_auth__post_request(
             f"{BASE_API_URL}/api/v1/media/{post_id}_{user_id}/unlike/",
         )
+        data = response.json()
         if self.verbose:
-            print("[UNLIKE]", response.json())
+            print("[UNLIKE]", data)
         return response.json()["status"] == "ok"
 
     def search(self, search_parameter: str) -> dict:
@@ -547,20 +548,22 @@ class ThreadsAPI:
         return response if response.status_code != 200 else response.json()
 
     def follow(self, user_id: str) -> bool:
-        res = self.__toggle_auth__post_request(
+        response = self.__toggle_auth__post_request(
             f"{BASE_API_URL}/api/v1/friendships/create/{user_id}/"
         )
+        data = response.json()
         if self.verbose:
-            print("[FOLLOW]", res.json())
-        return res.json()["status"] == "ok"
+            print("[FOLLOW]", data)
+        return response.json()["status"] == "ok"
 
     def unfollow(self, user_id: str) -> bool:
-        res = self.__toggle_auth__post_request(
+        response = self.__toggle_auth__post_request(
             f"{BASE_API_URL}/api/v1/friendships/destroy/{user_id}/"
         )
+        data = response.json()
         if self.verbose:
-            print("[UNFOLLOW]", res.json())
-        return res.json()["status"] == "ok"
+            print("[UNFOLLOW]", data)
+        return response.json()["status"] == "ok"
 
     def block(self, user_id: str) -> bool:
         """
@@ -588,9 +591,9 @@ class ThreadsAPI:
             headers=self.__get_app_headers(),
             data=f"signed_body=SIGNATURE.{params}",
         )
-
+        data = response.json()
         if self.verbose:
-            print("[BLOCK]", response.json())
+            print("[BLOCK]", data)
         return response.json()["status"] == "ok"
 
     def unblock(self, user_id: str) -> bool:
@@ -618,9 +621,9 @@ class ThreadsAPI:
             headers=self.__get_app_headers(),
             data=f"signed_body=SIGNATURE.{params}",
         )
-
+        data = response.json()
         if self.verbose:
-            print("[UNBLOCK]", response.json())
+            print("[UNBLOCK]", data)
         return response.json()["status"] == "ok"
 
     def restrict(self, user_id: str) -> bool:
@@ -648,9 +651,9 @@ class ThreadsAPI:
             headers=self.__get_app_headers(),
             data=f"signed_body=SIGNATURE.{params}",
         )
-
+        data = response.json()
         if self.verbose:
-            print("[RESTRICT]", response.json())
+            print("[RESTRICT]", data)
         return response.json()["status"] == "ok"
 
     def unrestrict(self, user_id: str) -> bool:
@@ -678,9 +681,9 @@ class ThreadsAPI:
             headers=self.__get_app_headers(),
             data=f"signed_body=SIGNATURE.{params}",
         )
-
+        data = response.json()
         if self.verbose:
-            print("[UNRESTRICT]", response.json())
+            print("[UNRESTRICT]", data)
         return response.json()["status"] == "ok"
 
     def mute(self, user_id: str) -> bool:
@@ -708,9 +711,9 @@ class ThreadsAPI:
             headers=self.__get_app_headers(),
             data=f"signed_body=SIGNATURE.{params}",
         )
-
+        data = response.json()
         if self.verbose:
-            print("[MUTE]", response.json())
+            print("[MUTE]", data)
         return response.json()["status"] == "ok"
 
     def unmute(self, user_id: str) -> bool:
@@ -738,9 +741,9 @@ class ThreadsAPI:
             headers=self.__get_app_headers(),
             data=f"signed_body=SIGNATURE.{params}",
         )
-
+        data = response.json()
         if self.verbose:
-            print("[UNMUTE]", response.json())
+            print("[UNMUTE]", data)
         return response.json()["status"] == "ok"
 
     def friendship_status(self, user_id: str) -> dict | int:
@@ -755,6 +758,44 @@ class ThreadsAPI:
         """
         response = self.http_client.get(
             url=f"{BASE_API_URL}/api/v1/friendships/show/{user_id}/",
+            headers=self.__get_app_headers(),
+        )
+        if response.status_code == 200:
+            return response.json()
+        else:
+            return response.status_code
+
+    def get_followings(self, user_id: str) -> dict | int:
+        """
+        Get user followings
+
+        Arguments:
+            user_id (str): user identifier.
+
+        Returns:
+            dict(user_followings_data) or int(response.status_code)
+        """
+        response = self.http_client.get(
+            url=f"{BASE_API_URL}/api/v1/friendships/{user_id}/following/",
+            headers=self.__get_app_headers(),
+        )
+        if response.status_code == 200:
+            return response.json()
+        else:
+            return response.status_code
+
+    def get_followers(self, user_id: str) -> dict | int:
+        """
+        Get user followers
+
+        Arguments:
+            user_id (str): user identifier.
+
+        Returns:
+            dict(user_followers_data) or int(response.status_code)
+        """
+        response = self.http_client.get(
+            url=f"{BASE_API_URL}/api/v1/friendships/{user_id}/followers/",
             headers=self.__get_app_headers(),
         )
         if response.status_code == 200:
