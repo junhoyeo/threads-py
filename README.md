@@ -165,7 +165,7 @@ user_id = api.get_user_id_from_username('junhoyeo')
 api.friendship_status(user_id)
 ```
 
-#### 🧑‍🦳 Get User Followings and Followers
+#### 👉🏻👈🏻 Get User Followings and Followers
 
 ```python
 user_id = api.get_user_id_from_username('junhoyeo')
@@ -173,6 +173,22 @@ user_id = api.get_user_id_from_username('junhoyeo')
 # 💡 Uses current credentials
 api.get_followings(user_id)
 api.get_followers(user_id)
+```
+
+#### ➕ Get Suggested Users
+
+```python
+# 💡 Uses current credentials
+api.get_suggested_users()
+# or
+api.get_suggested_users(count=5)
+# or
+api.get_suggested_users(paging=3)
+# or
+api.get_suggested_users(count=5, paging=2)
+# "count" amd "paging" parameters are optional
+# default: count = 15 "paging" are optional
+# default: paging = None
 ```
 
 
@@ -194,6 +210,7 @@ api.get_followers(user_id)
   - [ ] 📌 Link Threads & LLaMa ([@Mineru98](https://github.com/Mineru98))
   - [ ] 📌 Provide statistical analysis of posts in Threads ([@Mineru98](https://github.com/Mineru98))
 - [x] ✅ Read user private data
+  - [x] ✅ Get suggested users
   - [x] ✅ Read User Followers
   - [x] ✅ Read User Followings
 - [ ] 🚧 Write data (i.e. write automated Threads)

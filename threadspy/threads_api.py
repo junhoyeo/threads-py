@@ -823,8 +823,8 @@ class ThreadsAPI:
             response (dict) | error (status_code)
         """
         parameters = {
-            "paging_token": count,
-            "count": paging,
+            "paging_token": paging,
+            "count": count,
         }
         response = self.http_client.get(
             url=f"{BASE_API_URL}/api/v1/text_feed/recommended_users/",
