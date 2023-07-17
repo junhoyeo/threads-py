@@ -186,7 +186,7 @@ api.get_suggested_users(count=5)
 api.get_suggested_users(paging=3)
 # or
 api.get_suggested_users(count=5, paging=2)
-# "count" amd "paging" parameters are optional
+# "count" and "paging" parameters are optional
 # default: count = 15 "paging" are optional
 # default: paging = None
 ```
