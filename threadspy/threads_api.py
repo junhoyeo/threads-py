@@ -109,8 +109,14 @@ class ThreadsAPI:
             return None
 
     def __get_app_headers(self) -> dict:
+        """
+        Generates Header App.
+        Returns:
+            Random generated header (dict)
+        """
         headers = {
             "User-Agent": f"Barcelona {LATEST_ANDROID_APP_VERSION} Android",
+            "Sec-Fetch-Site": "same-origin",
             "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
         }
         if self.token is not None:
@@ -797,6 +803,33 @@ class ThreadsAPI:
         response = self.http_client.get(
             url=f"{BASE_API_URL}/api/v1/friendships/{user_id}/followers/",
             headers=self.__get_app_headers(),
+        )
+        if response.status_code == 200:
+            return response.json()
+        else:
+            return response.status_code
+
+    def get_suggested_users(
+        self, count: int = 15, paging: int | None = None
+    ) -> dict | int:
+        """
+        Get suggested users.
+
+        Arguments:
+            count (int): number of user suggestions.
+            paging (int): set the page number.
+
+        Returns:
+            response (dict) | error (status_code)
+        """
+        parameters = {
+            "paging_token": count,
+            "count": paging,
+        }
+        response = self.http_client.get(
+            url=f"{BASE_API_URL}/api/v1/text_feed/recommended_users/",
+            headers=self.__get_app_headers(),
+            params=parameters,
         )
         if response.status_code == 200:
             return response.json()
