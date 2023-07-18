@@ -23,11 +23,13 @@ from threadspy.types import (
     UsersData,
     ThreadsUser,
     ThreadData,
+    SuggestedUser,
     GetUserProfileResponse,
     GetThreadLikersResponse,
     GetUserProfileThreadResponse,
     GetUserProfileRepliesResponse,
     GetUserProfileThreadsResponse,
+    GetSuggestedUsersResponse,
 )
 
 from threadspy.constants import (
@@ -79,9 +81,7 @@ class ThreadsAPI:
             self.username = username
             self.password = password
             self.public_key, self.public_key_id = self._get_ig_public_key()
-            self.encrypted_password, self.timestamp_string = self._password_encryption(
-                password
-            )
+            self.encrypted_password, self.timestamp_string = self._password_encryption(password)
             self.user_id = self.get_user_id_from_username(username)
 
         if token is not None and isinstance(token, str):
@@ -176,13 +176,9 @@ class ThreadsAPI:
         timestamp_string = str(timestamp).encode("utf-8")
 
         secret_key = get_random_bytes(32)
-        key_id_mixed_bytes = int(1).to_bytes(1, "big") + self.public_key_id.to_bytes(
-            1, "big"
-        )
+        key_id_mixed_bytes = int(1).to_bytes(1, "big") + self.public_key_id.to_bytes(1, "big")
         initialization_vector = get_random_bytes(12)
-        encrypted_rsa_key_mixed_bytes = int(0).to_bytes(1, "big") + int(1).to_bytes(
-            1, "big"
-        )
+        encrypted_rsa_key_mixed_bytes = int(0).to_bytes(1, "big") + int(1).to_bytes(1, "big")
         public_key_bytes = base64.b64decode(self.public_key)
         public_key = RSA.import_key(extern_key=public_key_bytes)
         cipher = PKCS1_v1_5.new(public_key)
@@ -232,9 +228,7 @@ class ThreadsAPI:
                 "x-ig-app-id": None,
             }
         )
-        response = self.http_client.get(
-            f"https://www.instagram.com/{username}", headers=headers
-        )
+        response = self.http_client.get(f"https://www.instagram.com/{username}", headers=headers)
 
         text = response.text.replace("\n", "")
 
@@ -811,14 +805,12 @@ class ThreadsAPI:
 
     def get_suggested_users(
         self, count: int = 15, paging: int | None = None
-    ) -> dict | int:
+    ) -> List[SuggestedUser]:
         """
         Get suggested users.
-
         Arguments:
             count (int): number of user suggestions.
             paging (int): set the page number.
-
         Returns:
             response (dict) | error (status_code)
         """
@@ -831,10 +823,14 @@ class ThreadsAPI:
             headers=self.__get_app_headers(),
             params=parameters,
         )
-        if response.status_code == 200:
-            return response.json()
-        else:
-            return response.status_code
+
+        try:
+            suggested = GetSuggestedUsersResponse.from_dict(response.json())
+            return suggested.users
+        except Exception as e:
+            if self.verbose:
+                print("[ERROR] ", e)
+            return []
 
     def get_token(self) -> str:
         """
@@ -844,9 +840,7 @@ class ThreadsAPI:
             str: validate token string None if not valid
         """
         try:
-            blockVersion = (
-                "5f56efad68e1edec7801f630b5c122704ec5378adbee6609a448f105f34a9c73"
-            )
+            blockVersion = "5f56efad68e1edec7801f630b5c122704ec5378adbee6609a448f105f34a9c73"
             params = json.dumps(
                 {
                     "client_input_params": {
@@ -947,9 +941,7 @@ class ThreadsAPI:
                     return False
                 else:
                     image_content = self.__download(image_path)
-            upload_id = self.upload_image(
-                image_url=image_path, image_content=image_content
-            )
+            upload_id = self.upload_image(image_url=image_path, image_content=image_content)
             if upload_id == None:
                 return False
             params["upload_id"] = upload_id["upload_id"]
