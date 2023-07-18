@@ -191,6 +191,16 @@ api.get_suggested_users(count=5, paging=2)
 # default: paging = None
 ```
 
+#### 🔁 Repost Thread and Undo Reposted Threads
+
+```python
+post_id = api.get_post_id_from_thread_id('CugF-EjhQ3r')
+
+# 💡 Uses current credentials
+api.repost_thread(user_id)
+api.unrepost_thread(user_id)
+```
+
 
 ## [<img src="./.github/emojis/pushpin.png" width="30" height="30" />](https://github.com/junhoyeo) Roadmap
 
@@ -213,6 +223,7 @@ api.get_suggested_users(count=5, paging=2)
   - [x] ✅ Get suggested users
   - [x] ✅ Read User Followers
   - [x] ✅ Read User Followings
+  - [ ] 🚧 Read User Timeline
 - [ ] 🚧 Write data (i.e. write automated Threads)
   - [ ] 🚧 Create new Thread with text
     - [ ] 🚧 Make link previews to get shown
@@ -234,6 +245,8 @@ api.get_suggested_users(count=5, paging=2)
 - [x] ✅ Interactions
   - [x] ✅ Like Thread
   - [x] ✅ Unlike Thread
+  - [x] ✅ Repost Thread
+  - [x] ✅ Undo Reposted Thread
 
 ## License
 
