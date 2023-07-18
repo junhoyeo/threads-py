@@ -81,7 +81,9 @@ class ThreadsAPI:
             self.username = username
             self.password = password
             self.public_key, self.public_key_id = self._get_ig_public_key()
-            self.encrypted_password, self.timestamp_string = self._password_encryption(password)
+            self.encrypted_password, self.timestamp_string = self._password_encryption(
+                password
+            )
             self.user_id = self.get_user_id_from_username(username)
 
         if token is not None and isinstance(token, str):
@@ -176,9 +178,13 @@ class ThreadsAPI:
         timestamp_string = str(timestamp).encode("utf-8")
 
         secret_key = get_random_bytes(32)
-        key_id_mixed_bytes = int(1).to_bytes(1, "big") + self.public_key_id.to_bytes(1, "big")
+        key_id_mixed_bytes = int(1).to_bytes(1, "big") + self.public_key_id.to_bytes(
+            1, "big"
+        )
         initialization_vector = get_random_bytes(12)
-        encrypted_rsa_key_mixed_bytes = int(0).to_bytes(1, "big") + int(1).to_bytes(1, "big")
+        encrypted_rsa_key_mixed_bytes = int(0).to_bytes(1, "big") + int(1).to_bytes(
+            1, "big"
+        )
         public_key_bytes = base64.b64decode(self.public_key)
         public_key = RSA.import_key(extern_key=public_key_bytes)
         cipher = PKCS1_v1_5.new(public_key)
@@ -228,7 +234,9 @@ class ThreadsAPI:
                 "x-ig-app-id": None,
             }
         )
-        response = self.http_client.get(f"https://www.instagram.com/{username}", headers=headers)
+        response = self.http_client.get(
+            f"https://www.instagram.com/{username}", headers=headers
+        )
 
         text = response.text.replace("\n", "")
 
@@ -306,7 +314,9 @@ class ThreadsAPI:
                 id=None,
             )
 
-    def get_user_profile_threads(self, username: str, user_id: str) -> List[Thread]:
+    def get_user_profile_threads(
+        self, username: str, user_id: str | None = None
+    ) -> List[Thread]:
         """
         Returns a list of threads posted in the profile.
 
@@ -319,6 +329,9 @@ class ThreadsAPI:
         """
         if self.verbose:
             print("[fbLSDToken] USING", self.fbLSDToken)
+        if not user_id:
+            user_id = self.get_user_id_from_username(username)
+
         headers = self.__get_default_headers(username)
         headers["x-fb-friendly-name"] = "BarcelonaProfileThreadsTabQuery"
 
@@ -340,7 +353,9 @@ class ThreadsAPI:
                 print("[ERROR] ", e)
             return []
 
-    def get_user_profile_replies(self, username: str, user_id: str) -> List[Thread]:
+    def get_user_profile_replies(
+        self, username: str, user_id: str | None = None
+    ) -> List[Thread]:
         """
         Returns a list of replies in the thread.
 
@@ -353,6 +368,9 @@ class ThreadsAPI:
         """
         if self.verbose:
             print("[fbLSDToken] USING", self.fbLSDToken)
+        if not user_id:
+            user_id = self.get_user_id_from_username(username)
+
         headers = self.__get_default_headers(username)
         headers["x-fb-friendly-name"] = "BarcelonaProfileRepliesTabQuery"
 
@@ -492,6 +510,29 @@ class ThreadsAPI:
         response = self.http_client.post(url, headers=headers)
         return response
 
+    def delete_thread(self, post_id: str) -> bool:
+        """
+        Delete thread.
+
+        Arguments:
+            post_id (str): post identifier
+
+        Returns:
+           boolean and if verbose mode is enabled, prints response dict.
+        """
+        token = self.get_token() if self.token is None else self.token
+        if token is None:
+            raise "Token not found"
+        user_id = self.user_id or self.get_current_user_id()
+        response = self.__toggle_auth__post_request(
+            url=f"{BASE_API_URL}/api/v1/media/{post_id}_{user_id}/delete/?media_type=TEXT_POST",
+        )
+
+        data = response.json()
+        if self.verbose:
+            print("[DELETE]", data)
+        return data["status"] == "ok"
+
     def like(self, post_id: str) -> bool:
         """
         like a post.
@@ -500,7 +541,7 @@ class ThreadsAPI:
             post_id (str): post identifier
 
         Returns:
-            boolean and if verbose mode is enabled, prints response dict
+            boolean and if verbose mode is enabled, prints response dict.
         """
         user_id = self.user_id or self.get_current_user_id()
         response = self.__toggle_auth__post_request(
@@ -544,9 +585,9 @@ class ThreadsAPI:
         if token is None:
             raise "Token not found"
         response = self.http_client.post(
-            url=f'{BASE_API_URL}/api/v1/repost/create_repost/',
+            url=f"{BASE_API_URL}/api/v1/repost/create_repost/",
             headers=self.__get_app_headers(),
-            data=f'media_id={post_id}',
+            data=f"media_id={post_id}",
         )
         data = response.json()
         if self.verbose:
@@ -555,7 +596,7 @@ class ThreadsAPI:
 
     def unrepost_thread(self, post_id: str) -> bool:
         """
-        Unrepost a thread.
+        Delete reposted thread.
 
         Arguments:
             post_id (str): post identifier
@@ -567,9 +608,9 @@ class ThreadsAPI:
         if token is None:
             raise "Token not found"
         response = self.http_client.post(
-            url=f'{BASE_API_URL}/api/v1/repost/delete_text_app_repost/',
+            url=f"{BASE_API_URL}/api/v1/repost/delete_text_app_repost/",
             headers=self.__get_app_headers(),
-            data=f'original_media_id={post_id}',
+            data=f"original_media_id={post_id}",
         )
         data = response.json()
         if self.verbose:
@@ -886,7 +927,9 @@ class ThreadsAPI:
             str: validate token string None if not valid
         """
         try:
-            blockVersion = "5f56efad68e1edec7801f630b5c122704ec5378adbee6609a448f105f34a9c73"
+            blockVersion = (
+                "5f56efad68e1edec7801f630b5c122704ec5378adbee6609a448f105f34a9c73"
+            )
             params = json.dumps(
                 {
                     "client_input_params": {
@@ -987,7 +1030,9 @@ class ThreadsAPI:
                     return False
                 else:
                     image_content = self.__download(image_path)
-            upload_id = self.upload_image(image_url=image_path, image_content=image_content)
+            upload_id = self.upload_image(
+                image_url=image_path, image_content=image_content
+            )
             if upload_id == None:
                 return False
             params["upload_id"] = upload_id["upload_id"]
