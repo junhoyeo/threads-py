@@ -555,7 +555,7 @@ class ThreadsAPI:
 
     def unrepost_thread(self, post_id: str) -> bool:
         """
-        Unrepost a thread's.
+        Unrepost a thread.
 
         Arguments:
             post_id (str): post identifier
