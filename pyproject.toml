@@ -1,7 +1,7 @@
 [tool.poetry]
 packages = [{ include = "threadspy", from = "." }]
 name = "threads-py"
-version = "0.0.8"
+version = "0.0.9"
 description = "Unofficial, Reverse-Engineered Python client for Meta's Threads."
 license = "MIT"
 authors = [
