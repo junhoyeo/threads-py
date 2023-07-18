@@ -3,7 +3,7 @@ from threadspy import ThreadsAPI
 from time import sleep
 
 
-class TestLikeAndUnLike(unittest.TestCase):
+class TestRepostAndUnrepost(unittest.TestCase):
     def setUp(self):
         self.threads_api = ThreadsAPI(
             verbose=True,
