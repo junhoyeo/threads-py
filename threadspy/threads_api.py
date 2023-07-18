@@ -110,7 +110,7 @@ class ThreadsAPI:
 
     def __get_app_headers(self) -> dict:
         """
-        Generates Header App.
+        Generates App Headers.
         Returns:
             Random generated header (dict)
         """
