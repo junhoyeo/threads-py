@@ -530,6 +530,52 @@ class ThreadsAPI:
             print("[UNLIKE]", data)
         return response.json()["status"] == "ok"
 
+    def repost_thread(self, post_id: str) -> bool:
+        """
+        Repost a thread.
+
+        Arguments:
+            post_id (str): post identifier
+
+        Returns:
+            boolean and if verbose mode is enabled, prints response dict
+        """
+        token = self.get_token() if self.token is None else self.token
+        if token is None:
+            raise "Token not found"
+        response = self.http_client.post(
+            url=f'{BASE_API_URL}/api/v1/repost/create_repost/',
+            headers=self.__get_app_headers(),
+            data=f'media_id={post_id}',
+        )
+        data = response.json()
+        if self.verbose:
+            print("[Repost]", data)
+        return data["status"] == "ok"
+
+    def unrepost_thread(self, post_id: str) -> bool:
+        """
+        Unrepost a thread.
+
+        Arguments:
+            post_id (str): post identifier
+
+        Returns:
+            boolean and if verbose mode is enabled, prints response dict
+        """
+        token = self.get_token() if self.token is None else self.token
+        if token is None:
+            raise "Token not found"
+        response = self.http_client.post(
+            url=f'{BASE_API_URL}/api/v1/repost/delete_text_app_repost/',
+            headers=self.__get_app_headers(),
+            data=f'original_media_id={post_id}',
+        )
+        data = response.json()
+        if self.verbose:
+            print("[Unrepost]", data)
+        return data["status"] == "ok"
+
     def search(self, search_parameter: str) -> dict:
         """
         Search for user.
