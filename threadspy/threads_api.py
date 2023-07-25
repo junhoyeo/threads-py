@@ -919,6 +919,33 @@ class ThreadsAPI:
                 print("[ERROR] ", e)
             return []
 
+    def get_timeline(self, max_id: str | None = None) -> dict:
+        """
+        Get User Timeline.
+        Arguments:
+            max_id (str): ID for the next batch of posts
+        Returns:
+            response (dict) | error (status_code)
+        """
+        if max_id is None:
+            parameters = {
+                'pagination_source': 'text_post_feed_threads',
+            }
+        else:
+            parameters = {
+                    'pagination_source': 'text_post_feed_threads',
+                    'max_id': max_id
+            }
+        response = self.http_client.post(
+            url=f"{BASE_API_URL}/api/v1/feed/text_post_app_timeline/",
+            headers=self.__get_app_headers(),
+            params=parameters,
+        )
+        if response.status_code == 200:
+            return response.json()
+        else:
+            return response.status_code
+
     def get_token(self) -> str:
         """
         set fb login token
