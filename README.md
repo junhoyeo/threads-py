@@ -49,7 +49,7 @@ api = ThreadsAPI(
   - [x] ✅ [Read User Followers](#read-user-followers)
   - [x] ✅ [Get suggested users](#get-suggested-users)
   - [x] ✅ [Search Query](#search-query)
-  - [ ] 🚧 Read User Timeline Feed
+  - [x] ✅ [Read User Timeline Feed](#read-user-timeline-feed)
 - [ ] 🔏 [Write Private Data (Authentication Required)](#write-private-data-authentication-required)
   - [ ] ✅ (Create New Thrad Or Reply To Eexisting Thread)[#create-new-thrad-or-reply-to-eexisting-thread]
     - [ ] 🚧 Make link previews to get shown
@@ -313,6 +313,23 @@ thread_likes = api.search(search_parameter)
 |     Parameters     |    Description  |  Type   | Required |
 |:------------------:|:---------------:|:-------:|:--------:|
 | `search_parameter` |   Search Query  |  String |   Yes    |
+</details>
+
+
+
+### Read User Timeline Feed:
+
+```python3
+user_timeline = api.get_timeline(max_id)
+```
+<details>
+<summary>
+<h4>Parameters</h4>
+</summary>
+
+|Parameters|       Description      |  Type   | Required |
+|:--------:|:----------------------:|:-------:|:--------:|
+| `max_id` |   Next Posts Batch ID  |  String |    No    |
 </details>
 
 

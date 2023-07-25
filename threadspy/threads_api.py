@@ -919,12 +919,11 @@ class ThreadsAPI:
                 print("[ERROR] ", e)
             return []
 
-    def get_timeline(self, max_id: int | None = None) -> dict:
+    def get_timeline(self, max_id: str | None = None) -> dict:
         """
         Get User Timeline.
         Arguments:
-            max_id (int): number of user suggestions.
-            paging (int): set the page number.
+            max_id (str): ID for the next batch of posts
         Returns:
             response (dict) | error (status_code)
         """
