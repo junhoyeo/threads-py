@@ -51,7 +51,7 @@ api = ThreadsAPI(
   - [x] ✅ [Search Query](#search-query)
   - [x] ✅ [Read User Timeline Feed](#read-user-timeline-feed)
 - [ ] 🔏 [Write Private Data (Authentication Required)](#write-private-data-authentication-required)
-  - [ ] ✅ (Create New Thrad Or Reply To Eexisting Thread)[#create-new-thrad-or-reply-to-eexisting-thread]
+  - [ ] ✅ [Create New Thrad Or Reply To Eexisting Thread](#create-new-thrad-or-reply-to-eexisting-thread)
     - [ ] 🚧 Make link previews to get shown
   - [ ] ✅ [Delete Thread](#delete-thread)
   - [ ] 🚧 Quote Thread
