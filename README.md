@@ -55,7 +55,7 @@ api = ThreadsAPI(
     - [ ] 🚧 Make link previews to get shown
   - [ ] ✅ [Delete Thread](#delete-thread)
   - [ ] 🚧 Quote Thread
-- [x] 🔒 (Friendship Actions)[#friendship-actions-authentication-required]
+- [x] 🔒 [Friendship Actions](#friendship-actions-authentication-required)
   - [x] ✅ [Follow User](#follow-user)
   - [x] ✅ [Unfollow User](#unfollow-user)
   - [x] ✅ [Block User](#block-user)
