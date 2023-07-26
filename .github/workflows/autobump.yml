@@ -1,4 +1,4 @@
-name: Bump Pypi version
+name: AutoBump Pypi version
 
 on:
   pull_request:
