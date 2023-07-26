@@ -10,10 +10,11 @@ authors = [
   "DrunkLeen <reza.df.x@gmail.com>",
   "Ashrf <ashrftvm1@gmail.com>",
   "mirageoasis <kimhw0820@naver.com>",
+  "Daethyra <dev-daethyra@protonmail.com>",
 ]
 repository = "https://github.com/junhoyeo/threads-py"
 readme = ["README.md", "LICENSE"]
-keywords = ["threads", "instagram", "facebook", "meta", "api"]
+keywords = ["threads", "instagram", "facebook", "meta", "api", "automation", "python"]
 
 [tool.poetry.dependencies]
 python = ">=3.8.1,<4.0"
@@ -26,3 +27,8 @@ pycryptodome = "^3.18.0"
 optional = true
 [tool.poetry.group.ai.dependencies]
 langchain = "^0.0.227"
+
+[tool.poetry.group.testing]
+optional = true
+[tool.poetry.group.testing.dependencies]
+pytest = "^7.4.0"  # Specify the pytest version you want to use
