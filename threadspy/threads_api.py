@@ -946,6 +946,49 @@ class ThreadsAPI:
         else:
             return response.status_code
 
+    def get_notifications(
+        self, notification_filter : str = "replies",
+        max_id : str | None = None,
+        pagination: str | None = None
+        ) -> dict:
+        """
+        Get User Notifications.
+        Arguments:
+            notification_filter (str): "mentions", "replies", "verified"
+            max_id (str): ID for the next batch of notifications.
+            pagination (str): Timestamp of first record of pagination
+        Returns:
+            response (dict) | error (status_code)
+        """
+        filters = {
+            "mentions": "text_post_app_mentions",
+            "replies": "text_post_app_replies",
+            "verified": "verified"
+        }
+        timezone_offset = (datetime.now() - datetime.utcnow()).seconds
+        parameters = {
+            'feed_type' : 'all',
+            'mark_as_seen' : False,
+            'timezone_offset':str(timezone_offset)
+        }
+        if filter:
+            parameters.update({'selected_filter': filters[notification_filter]})
+        
+        if max_id:
+            parameters.update({
+                'max_id': max_id,
+                'pagination_first_record_timestamp': pagination
+                })
+        response = self.http_client.get(
+            url=f"{BASE_API_URL}/api/v1/text_feed/text_app_notifications/",
+            headers=self.__get_app_headers(),
+            params=parameters,
+        )
+        if response.status_code == 200:
+            return response.json()
+        else:
+            return response.status_code
+
     def get_token(self) -> str:
         """
         set fb login token
