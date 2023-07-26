@@ -50,7 +50,7 @@ api = ThreadsAPI(
   - [x] ✅ [Get suggested users](#get-suggested-users)
   - [x] ✅ [Search Query](#search-query)
   - [x] ✅ [Read User Timeline Feed](#read-user-timeline-feed)
-  - [x] ✅ [Get Notifications](#read-user-timeline-feed)
+  - [x] ✅ [Get Notifications](#get-notifications)
 - [ ] 🔏 [Write Private Data (Authentication Required)](#write-private-data-authentication-required)
   - [ ] ✅ [Create New Thrad Or Reply To Eexisting Thread](#create-new-thrad-or-reply-to-eexisting-thread)
     - [ ] 🚧 Make link previews to get shown
