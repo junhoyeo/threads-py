@@ -1,5 +1,6 @@
 import os
 import sys
+import logging
 import itertools
 from datetime import datetime
 from langchain import PromptTemplate, LLMChain
@@ -10,6 +11,8 @@ from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 from ..threads_api import ThreadsAPI
 from .templates import QA_template
 
+# Set up logging
+logging.basicConfig(filename='threads_agent.log', level=logging.INFO)
 
 class ThreadsAgent:
     mode = None
@@ -39,12 +42,8 @@ class ThreadsAgent:
                         os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
                         self.OPENAI_API_KEY = OPENAI_API_KEY
                 except:
-                    print(
-                        "Please, export your OpenAI API KEY over 'OPENAI_API_KEY' environment variable"
-                    )
-                    print(
-                        "You may create the key here: https://platform.openai.com/account/api-keys"
-                    )
+                    logging.error("Please, export your OpenAI API KEY over 'OPENAI_API_KEY' environment variable")
+                    logging.error("You may create the key here: https://platform.openai.com/account/api-keys")
                     sys.exit(1)
             if model is not None:
                 self.model = model
@@ -151,4 +150,10 @@ class ThreadsAgent:
             )
         llm_chain = LLMChain(prompt=prompt, llm=llm)
 
-        return llm_chain.run(question)
+        answer = llm_chain.run(question)
+
+        # Log the question and answer
+        logging.info(f"Question: {question}")
+        logging.info(f"Answer: {answer}")
+
+        return answer
