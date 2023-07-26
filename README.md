@@ -50,6 +50,7 @@ api = ThreadsAPI(
   - [x] ✅ [Get suggested users](#get-suggested-users)
   - [x] ✅ [Search Query](#search-query)
   - [x] ✅ [Read User Timeline Feed](#read-user-timeline-feed)
+  - [x] ✅ [Get Notifications](#read-user-timeline-feed)
 - [ ] 🔏 [Write Private Data (Authentication Required)](#write-private-data-authentication-required)
   - [ ] ✅ (Create New Thrad Or Reply To Eexisting Thread)[#create-new-thrad-or-reply-to-eexisting-thread]
     - [ ] 🚧 Make link previews to get shown
@@ -330,6 +331,27 @@ user_timeline = api.get_timeline(max_id)
 |Parameters|       Description      |  Type   | Required |
 |:--------:|:----------------------:|:-------:|:--------:|
 | `max_id` |   Next Posts Batch ID  |  String |    No    |
+</details>
+
+
+
+### Get Notifications:
+
+```python3
+user_timeline = api.get_timeline(max_id)
+```
+<details>
+<summary>
+<h4>Parameters</h4>
+</summary>
+
+|       Parameters      |       Description      |  Type   | Required | Default Value |
+|:---------------------:|:----------------------:|:-------:|:--------:|:-------------:|
+| `notification_filter` |   Next Posts Batch ID  |  String |    No    |    'replies'  |
+|       `max_id`        |   Next Posts Batch ID  |  String |    No    |      None     |
+|      `pagination`     |   Next Posts Batch ID  |  String |    No    |      None     |
+
+'notification_filter' values: 'mentions', 'replies', 'verified'
 </details>
 
 
