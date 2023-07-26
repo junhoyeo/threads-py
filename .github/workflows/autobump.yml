@@ -1,0 +1,34 @@
+name: AutoBump Pypi version
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  bump-version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+      - name: Install Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+      - name: Install dependencies
+        run: poetry install
+      - name: Run tests
+        run: poetry run pytest
+      - name: Bump version and create new branch
+        run: |
+          git checkout -b autobump-patch
+          poetry version patch
+          git commit -am "Bump version"
+        env:
+          AUTOBUMP_TOKEN: ${{ secrets.AUTOBUMP_TOKEN }}
+      - name: Push changes
+        run: |
+          git push https://${{ secrets.AUTOBUMP_TOKEN }}@github.com/${{ github.repository_owner }}/${{ github.repository }}.git autobump-patch
