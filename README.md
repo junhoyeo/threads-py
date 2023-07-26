@@ -52,11 +52,11 @@ api = ThreadsAPI(
   - [x] ✅ [Read User Timeline Feed](#read-user-timeline-feed)
   - [x] ✅ [Get Notifications](#read-user-timeline-feed)
 - [ ] 🔏 [Write Private Data (Authentication Required)](#write-private-data-authentication-required)
-  - [ ] ✅ (Create New Thrad Or Reply To Eexisting Thread)[#create-new-thrad-or-reply-to-eexisting-thread]
+  - [ ] ✅ [Create New Thrad Or Reply To Eexisting Thread](#create-new-thrad-or-reply-to-eexisting-thread)
     - [ ] 🚧 Make link previews to get shown
   - [ ] ✅ [Delete Thread](#delete-thread)
   - [ ] 🚧 Quote Thread
-- [x] 🔒 (Friendship Actions)[#friendship-actions-authentication-required]
+- [x] 🔒 [Friendship Actions](#friendship-actions-authentication-required)
   - [x] ✅ [Follow User](#follow-user)
   - [x] ✅ [Unfollow User](#unfollow-user)
   - [x] ✅ [Block User](#block-user)
