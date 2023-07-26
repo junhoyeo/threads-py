@@ -23,7 +23,7 @@ jobs:
         with:
           tag-prefix: 'v'
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.AUTOBUMP_TOKEN }}
       - name: 'cat package.json'
         run: cat ./package.json
       - name: 'Output Step'
